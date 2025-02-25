@@ -1,0 +1,66 @@
+﻿@page
+@model LoginModel
+
+@{
+    ViewData["Title"] = "Login Here";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h2 class="h4 text-center" style="color: #495057;">@ViewData["Title"]</h2>
+                    <section>
+                        <form id="account" method="post">
+                            
+                            <hr />
+                            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+                            <div class="form-floating mb-3">
+                                <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                                <label asp-for="Input.Email" class="form-label">Email</label>
+                                <span asp-validation-for="Input.Email" class="text-danger"></span>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="password" />
+                                <label asp-for="Input.Password" class="form-label">Password</label>
+                                <span asp-validation-for="Input.Password" class="text-danger"></span>
+                            </div>
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" asp-for="Input.RememberMe" id="rememberMeCheck" />
+                                <label class="form-check-label" for="rememberMeCheck">
+                                    @Html.DisplayNameFor(m => m.Input.RememberMe)
+                                </label>
+                            </div>
+                            <button id="login-submit" type="submit" class="w-100 btn btn-lg custom-save-button">Submit</button>
+                            <div class="text-center mt-3">
+                                <p><a id="forgot-password" asp-page="./ForgotPassword">Forgot your password?</a></p>
+                                <p><a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Register as a new user</a></p>
+                                <p><a id="resend-confirmation" asp-page="./ResendEmailConfirmation">Resend email confirmation</a></p>
+                            </div>
+                        </form>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .custom-save-button {
+        background-color: #495057;
+       
+        color: white;
+        transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+    }
+
+        .custom-save-button:hover {
+            background-color: deepskyblue;
+            color: white;
+        }
+
+</style>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
