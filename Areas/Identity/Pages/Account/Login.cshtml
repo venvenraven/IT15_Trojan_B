@@ -1,0 +1,77 @@
+﻿@page
+@model LoginModel
+
+@{
+    ViewData["Title"] = "Log in";
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css" />
+
+<style>
+    html, body {
+        height: 100%;
+        overflow: hidden;
+    }
+</style>
+
+<div class="d-flex justify-content-center align-items-center vh-100 bg-gradient">
+    <div class="card shadow-lg border-0 overflow-hidden" style="max-width: 800px; border-radius: 10px;">
+        <div class="row g-0">
+            <div class="col-md-6 d-none d-md-block position-relative">
+                <img src="/images/bg-construction.jpg" class="img-fluid h-100 w-100" style="object-fit: cover;" alt="Login Image">
+                <div class="position-absolute top-50 start-50 translate-middle text-black text-center px-3" style="background: rgba(255, 255, 255, 0.6); border-radius: 10px; width: 90%;">
+                    <h2 class="fw-bold">Welcome Back</h2>
+                    <p class="mb-0">Please log in using your personal information to stay connected with us.</p>
+                </div>
+            </div>
+            <div class="col-md-6 p-5 bg-white">
+                <div class="d-flex justify-content-end">
+                    <button type="button" class="btn-close" aria-label="Close" onclick="window.location.href='/'"></button>
+                </div>
+                <h3 class="text-center fw-bold mb-4">LOGIN</h3>
+                <form id="account" method="post" onsubmit="showSpinner()">
+                    <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+                    <div class="mb-3">
+                        <label asp-for="Input.Email" class="form-label">Email</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                            <input asp-for="Input.Email" class="form-control" autocomplete="username" required>
+                        </div>
+                        <span asp-validation-for="Input.Email" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Input.Password" class="form-label">Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                            <input asp-for="Input.Password" class="form-control" type="password" autocomplete="current-password" required>
+                        </div>
+                        <span asp-validation-for="Input.Password" class="text-danger"></span>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" asp-for="Input.RememberMe" />
+                        <label asp-for="Input.RememberMe" class="form-check-label">@Html.DisplayNameFor(m => m.Input.RememberMe)</label>
+                    </div>
+                    <button id="login-submit" type="submit" class="btn w-100 text-white" style="background-color: #00bcd4;">
+                        <span id="spinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                        Sign-in
+                    </button>
+                    <div class="text-center mt-3">
+                        <a id="forgot-password" asp-page="./ForgotPassword" class="text-decoration-none" style="color: #00bcd4;">Forgot password?</a>
+                        <p class="mt-2">Don’t have an account? <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl" class="fw-bold" style="color: #00bcd4;">Signup</a></p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showSpinner() {
+        document.getElementById("spinner").classList.remove("d-none");
+    }
+</script>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

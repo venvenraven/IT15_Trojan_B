@@ -1,0 +1,131 @@
+html {
+    font-size: 14px;
+    scroll-behavior: smooth;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus,
+.form-control:focus, .form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    margin-bottom: 60px;
+    font-family: Arial, sans-serif;
+}
+
+/* Logo Size Adjustments */
+.navbar-logo {
+    height: 40px; 
+    width: auto; 
+}
+
+@media (max-width: 768px) {
+    .navbar-logo {
+        height: 35px; 
+    }
+}
+.navbar-brand {
+    display: flex;
+    align-items: center;
+}
+
+.navbar-text {
+    font-size: 1.2rem; /* Adjust size */
+    color: black; 
+}
+
+.custom-nav-link {
+    position: relative;
+    font-weight: bold;
+    color: black !important; 
+    padding: 10px 15px;
+    border-radius: 5px;
+    transition: all 0.3s ease-in-out;
+    text-transform: uppercase;
+}
+
+.custom-nav-link:hover {
+    color: deepskyblue !important; 
+    background: rgba(255, 255, 255, 0.2); 
+    transform: scale(1.1); 
+    border-radius: 8px;
+}
+
+.custom-nav-link::after {
+    content: "";
+    display: block;
+    width: 0;
+    height: 3px;
+    background: deepskyblue;
+    transition: width 0.3s ease-in-out;
+}
+
+.custom-nav-link:hover::after {
+    width: 100%;
+}
+
+/* Show dropdown on hover */
+.nav-item.dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+/* Hover effect for dropdown items */
+.custom-dropdown-item:hover {
+    background-color: deepskyblue !important;
+    color: white !important;
+}
+
+/* Smooth transition effect */
+.custom-dropdown-item {
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+
+/* Custom Get Started Button */
+.btn-get-started {
+    background-color: deepskyblue !important; 
+    color: black !important; 
+    font-weight: bold;
+    transition: all 0.3s ease-in-out;
+    border-radius: 8px;
+    padding: 12px 25px;
+    border: 2px solid black; 
+}
+
+/* Hover Effect */
+.btn-get-started:hover {
+    background-color: black !important; 
+    color: white !important; 
+    transform: scale(1.05); 
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); 
+}
+
+/* Section Styling */
+.about-us, .contact-us {
+    padding: 60px 15px;
+    text-align: center;
+}
+
+.about-us h2, .contact-us h2 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.about-us p, .contact-us p {
+    font-size: 1.2rem;
+    color: #666;
+}
+
