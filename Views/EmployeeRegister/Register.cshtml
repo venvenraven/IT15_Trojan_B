@@ -1,0 +1,131 @@
+﻿@model IT15_Trojan_B.ViewModels.EmployeeRegisterViewModel
+
+@{
+    ViewData["Title"] = "Employee Register";
+}
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    html, body {
+        height: 100vh;
+        margin: 0;
+        /*overflow: hidden;*/
+    }
+</style>
+
+<div class="d-flex justify-content-center align-items-center min-vh-100">
+    <div class="card shadow-lg" style="width: 40rem; border-radius: 10px; overflow: hidden;">
+        <div class="p-5 bg-white position-relative">
+            <button type="button" class="btn-close position-absolute top-0 end-0 m-3"
+                    aria-label="Close" onclick="window.location.href='/'"></button>
+            <h3 class="text-center fw-bold">Employee Registration</h3>
+            <form asp-action="Register" method="post" enctype="multipart/form-data" id="employeeRegisterForm">
+
+                <div class="mb-3">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-person"></i></span>
+                        <input asp-for="FullName" class="form-control" placeholder="Enter your full name" />
+                    </div>
+                    <span asp-validation-for="FullName" class="text-danger form-text"></span>
+                </div>
+
+                <div class="mb-3">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
+                        <input asp-for="Address" class="form-control" placeholder="Enter your address" />
+                    </div>
+                    <span asp-validation-for="Address" class="text-danger form-text"></span>
+                </div>
+
+                <div class="mb-3">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+                        <input asp-for="ContactNumber" class="form-control" placeholder="Enter your phone number" />
+                    </div>
+                    <span asp-validation-for="ContactNumber" class="text-danger form-text"></span>
+                </div>
+
+                <div class="mb-3">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                        <input asp-for="Email" class="form-control" placeholder="Enter your email" />
+                    </div>
+                    <span asp-validation-for="Email" class="text-danger form-text"></span>
+                </div>
+
+                <div class="mb-3">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                        <input asp-for="Password" type="password" class="form-control" placeholder="Enter your password" />
+                    </div>
+                    <span asp-validation-for="Password" class="text-danger form-text"></span>
+                </div>
+
+                <div class="mb-3">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+                        <input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="Confirm your password" />
+                    </div>
+                    <span asp-validation-for="ConfirmPassword" class="text-danger form-text"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Classification" class="form-label"></label>
+                    <select asp-for="Classification" class="form-control">
+                        <option value="Select">Select Classification</option>
+                        <option value="General Contractor">General Contractor</option>
+                        <option value="Subcontractor">Subcontractor</option>
+                        <option value="Site Supervisor">Site Supervisor</option>
+                    </select>
+                    <span asp-validation-for="Classification" class="text-danger form-text"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Specialty" class="form-label"></label>
+                    <select asp-for="Specialty" class="form-control">
+                        <option value="Select">Select Specialty</option>
+                        <option value="Electrical">Electrical</option>
+                        <option value="Plumber">Plumber</option>
+                        <option value="Carpentry">Carpentry</option>
+                        <option value="Finish">Finish</option>
+                    </select>
+                    <span asp-validation-for="Specialty" class="text-danger form-text"></span>
+                </div>
+
+                <div class="mb-3">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-upload"></i></span>
+                        <input asp-for="UploadFile" type="file" class="form-control" />
+                    </div>
+                    <span asp-validation-for="UploadFile" class="text-danger form-text"></span>
+                </div>
+
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-info text-white" id="submitBtn">
+                        <span class="spinner-border spinner-border-sm d-none" id="spinner"></span>
+                        Sign-up
+                    </button>
+                </div>
+                <div class="text-center mt-3">
+                    <span>Already have an account?</span><a href="/Identity/Account/Login">Sign-in</a>
+
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.getElementById("employeeRegisterForm").addEventListener("submit", function () {
+            var submitBtn = document.getElementById("submitBtn");
+            var spinner = document.getElementById("spinner");
+
+            submitBtn.disabled = true;
+            spinner.classList.remove("d-none");
+        });
+    </script>
+}

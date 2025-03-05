@@ -35,12 +35,13 @@
             </a>
             <ul class="dropdown-menu border-0 shadow" aria-labelledby="registerDropdown">
                 <li>
-                    <a class="dropdown-item custom-dropdown-item" asp-area="Identity" asp-page="/Account/RegisterEmployee">
+                    <a class="dropdown-item custom-dropdown-item" asp-controller="EmployeeRegister" asp-action="Register">
                         <i class="fas fa-briefcase"></i> Employee
                     </a>
+
                 </li>
                 <li>
-                    <a class="dropdown-item custom-dropdown-item" asp-area="Identity" asp-page="/Account/RegisterCustomer">
+                    <a class="dropdown-item custom-dropdown-item" asp-area="Identity" asp-page="/Account/Register">
                         <i class="fas fa-user"></i> Customer
                     </a>
                 </li>

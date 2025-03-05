@@ -22,20 +22,20 @@ using System.Security.Claims;
 
 namespace IT15_Trojan_B.Areas.Identity.Pages.Account
 {
-    public class RegisterEmployeeModel : PageModel
+    public class RegisterModel : PageModel
     {
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IUserStore<IdentityUser> _userStore;
         private readonly IUserEmailStore<IdentityUser> _emailStore;
-        private readonly ILogger<RegisterEmployeeModel> _logger;
+        private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
 
-        public RegisterEmployeeModel(
+        public RegisterModel(
             UserManager<IdentityUser> userManager,
             IUserStore<IdentityUser> userStore,
             SignInManager<IdentityUser> signInManager,
-            ILogger<RegisterEmployeeModel> logger,
+            ILogger<RegisterModel> logger,
             IEmailSender emailSender)
         {
             _userManager = userManager;
@@ -64,6 +64,9 @@ namespace IT15_Trojan_B.Areas.Identity.Pages.Account
             public string Address { get; set; }
 
             [Required]
+            public string Classification { get; set; } // Dropdown value
+
+            [Required]
             [Phone]
             [Display(Name = "Phone Number")]
             public string PhoneNumber { get; set; }
@@ -83,6 +86,8 @@ namespace IT15_Trojan_B.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
+
+            public IFormFile UploadFile { get; set; } // For file upload
         }
 
         public async Task OnGetAsync(string returnUrl = null)
@@ -91,67 +96,62 @@ namespace IT15_Trojan_B.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
 
-       public async Task<IActionResult> OnPostAsync(string returnUrl = null)
-{
-    returnUrl ??= Url.Content("~/");
-    ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
-
-    if (ModelState.IsValid)
-    {
-        var user = CreateUser();
-
-        await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
-        await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
-        user.PhoneNumber = Input.PhoneNumber;
-
-        var result = await _userManager.CreateAsync(user, Input.Password);
-
-        if (result.Succeeded)
+        public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
-            _logger.LogInformation("User created a new account with password.");
+            returnUrl ??= Url.Content("~/");
+            ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
-            // ✅ Assign Employee Role
-            await _userManager.AddToRoleAsync(user, "Employee");
-
-            // ✅ Add Custom Claims (Full Name, Address)
-            await _userManager.AddClaimsAsync(user, new[]
+            if (ModelState.IsValid)
             {
-                new Claim("FullName", Input.FullName),
-                new Claim("Address", Input.Address)
-            });
+                var user = CreateUser();
 
-            var userId = await _userManager.GetUserIdAsync(user);
-            var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-            var callbackUrl = Url.Page(
-                "/Account/ConfirmEmail",
-                pageHandler: null,
-                values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
-                protocol: Request.Scheme);
+                await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
+                await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
 
-            await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                user.PhoneNumber = Input.PhoneNumber;
 
-            if (_userManager.Options.SignIn.RequireConfirmedAccount)
-            {
-                return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
+                var result = await _userManager.CreateAsync(user, Input.Password);
+
+                if (result.Succeeded)
+                {
+                    _logger.LogInformation("User created a new account with password.");
+
+                    await _userManager.AddClaimsAsync(user, new[]
+                    {
+                        new Claim("FullName", Input.FullName),
+                        new Claim("Address", Input.Address)
+                    });
+
+                    var userId = await _userManager.GetUserIdAsync(user);
+                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                    code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+                    var callbackUrl = Url.Page(
+                        "/Account/ConfirmEmail",
+                        pageHandler: null,
+                        values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
+                        protocol: Request.Scheme);
+
+                    await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
+                        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+
+                    if (_userManager.Options.SignIn.RequireConfirmedAccount)
+                    {
+                        return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
+                    }
+                    else
+                    {
+                        await _signInManager.SignInAsync(user, isPersistent: false);
+                        return LocalRedirect(returnUrl);
+                    }
+                }
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
             }
-            else
-            {
-                await _signInManager.SignInAsync(user, isPersistent: false);
-                return LocalRedirect(returnUrl);
-            }
+
+            return Page();
         }
-
-        foreach (var error in result.Errors)
-        {
-            ModelState.AddModelError(string.Empty, error.Description);
-        }
-    }
-
-    return Page();
-}
-
 
         private IdentityUser CreateUser()
         {
@@ -163,7 +163,7 @@ namespace IT15_Trojan_B.Areas.Identity.Pages.Account
             {
                 throw new InvalidOperationException($"Can't create an instance of '{nameof(IdentityUser)}'. " +
                     $"Ensure that '{nameof(IdentityUser)}' is not an abstract class and has a parameterless constructor, or alternatively " +
-                    $"override the register page in /Areas/Identity/Pages/Account/RegisterEmployee.cshtml");
+                    $"override the register page in /Areas/Identity/Pages/Account/Register.cshtml");
             }
         }
 
