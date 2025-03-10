@@ -82,6 +82,12 @@ app.UseEndpoints(endpoints =>
         defaults: new { controller = "Home", action = "CustomerDashboard" });
 
     endpoints.MapControllerRoute(
+    name: "adminDashboard",
+    pattern: "Home/AdminDashboard",
+    defaults: new { controller = "Home", action = "AdminDashboard" });
+
+
+    endpoints.MapControllerRoute(
         name: "default",
         pattern: "{controller=Home}/{action=Index}/{id?}");
 

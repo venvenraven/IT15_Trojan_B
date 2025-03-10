@@ -93,7 +93,7 @@ namespace IT15_Trojan_B.Areas.Identity.Pages.Account
 
                     if (roles.Contains("Admin"))
                     {
-                        return LocalRedirect("~/Admin/Dashboard");
+                        return LocalRedirect("~/Home/AdminDashboard");
                     }
                     else if (roles.Contains("Employee"))
                     {

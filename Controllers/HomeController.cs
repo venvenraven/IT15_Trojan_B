@@ -69,6 +69,11 @@ namespace IT15_Trojan_B.Controllers
             return View(model);
         }
 
+        [Authorize(Roles = "Admin")]
+        public IActionResult AdminDashboard()
+        {
+            return View();
+        }
 
 
 
