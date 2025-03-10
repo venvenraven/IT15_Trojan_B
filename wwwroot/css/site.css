@@ -129,3 +129,15 @@ body {
     color: #666;
 }
 
+.btn-outline:hover {
+    background-color: black !important;
+    color: white !important;
+}
+.table-container {
+    display: flex;
+}
+
+.table {
+    flex: 1;
+    min-height: 200px; /* Adjust based on need */
+}
