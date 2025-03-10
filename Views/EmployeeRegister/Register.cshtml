@@ -71,28 +71,35 @@
                     <span asp-validation-for="ConfirmPassword" class="text-danger form-text"></span>
                 </div>
 
-                <div class="mb-3">
+                <div class="mb-3 position-relative">
                     <label asp-for="Classification" class="form-label"></label>
-                    <select asp-for="Classification" class="form-control">
-                        <option value="Select">Select Classification</option>
-                        <option value="General Contractor">General Contractor</option>
-                        <option value="Subcontractor">Subcontractor</option>
-                        <option value="Site Supervisor">Site Supervisor</option>
-                    </select>
+                    <div class="position-relative">
+                        <select asp-for="Classification" class="form-control pe-5">
+                            <option value="Select">Select Classification</option>
+                            <option value="General Contractor">General Contractor</option>
+                            <option value="Subcontractor">Subcontractor</option>
+                            <option value="Site Supervisor">Site Supervisor</option>
+                        </select>
+                        <i class="bi bi-chevron-down position-absolute top-50 end-0 translate-middle-y me-3"></i>
+                    </div>
                     <span asp-validation-for="Classification" class="text-danger form-text"></span>
                 </div>
 
-                <div class="mb-3">
+                <div class="mb-3 position-relative">
                     <label asp-for="Specialty" class="form-label"></label>
-                    <select asp-for="Specialty" class="form-control">
-                        <option value="Select">Select Specialty</option>
-                        <option value="Electrical">Electrical</option>
-                        <option value="Plumber">Plumber</option>
-                        <option value="Carpentry">Carpentry</option>
-                        <option value="Finish">Finish</option>
-                    </select>
+                    <div class="position-relative">
+                        <select asp-for="Specialty" class="form-control pe-5">
+                            <option value="Select">Select Specialty</option>
+                            <option value="Electrical">Electrical</option>
+                            <option value="Plumber">Plumber</option>
+                            <option value="Carpentry">Carpentry</option>
+                            <option value="Finish">Finish</option>
+                        </select>
+                        <i class="bi bi-chevron-down position-absolute top-50 end-0 translate-middle-y me-3"></i>
+                    </div>
                     <span asp-validation-for="Specialty" class="text-danger form-text"></span>
                 </div>
+
 
                 <div class="mb-3">
                     <div class="input-group">
