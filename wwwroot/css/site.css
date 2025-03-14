@@ -94,8 +94,8 @@ body {
 
 /* Custom Get Started Button */
 .btn-get-started {
-    background-color: deepskyblue !important; 
-    color: black !important; 
+    background-color: black !important; 
+    color: antiquewhite !important; 
     font-weight: bold;
     transition: all 0.3s ease-in-out;
     border-radius: 8px;
@@ -105,7 +105,7 @@ body {
 
 /* Hover Effect */
 .btn-get-started:hover {
-    background-color: black !important; 
+    background-color: deepskyblue !important; 
     color: white !important; 
     transform: scale(1.05); 
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); 
@@ -129,15 +129,12 @@ body {
     color: #666;
 }
 
-.btn-outline:hover {
-    background-color: black !important;
-    color: white !important;
-}
 .table-container {
     display: flex;
 }
 
 .table {
     flex: 1;
-    min-height: 200px; /* Adjust based on need */
+    min-height: 200px;
+    min-width: auto;
 }

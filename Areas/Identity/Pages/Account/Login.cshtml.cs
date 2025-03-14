@@ -68,6 +68,7 @@ namespace IT15_Trojan_B.Areas.Identity.Pages.Account
             ReturnUrl = returnUrl;
         }
 
+        [ValidateAntiForgeryToken] // Added CSRF Protection
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
             returnUrl ??= Url.Content("~/");
@@ -83,26 +84,16 @@ namespace IT15_Trojan_B.Areas.Identity.Pages.Account
                     return Page();
                 }
 
-                var result = await _signInManager.PasswordSignInAsync(user, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+                var result = await _signInManager.PasswordSignInAsync(user, Input.Password, Input.RememberMe, lockoutOnFailure: true);
 
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
-
                     var roles = await _userManager.GetRolesAsync(user);
 
-                    if (roles.Contains("Admin"))
-                    {
-                        return LocalRedirect("~/Home/AdminDashboard");
-                    }
-                    else if (roles.Contains("Employee"))
-                    {
-                        return LocalRedirect("~/Home/EmployeeDashboard");
-                    }
-                    else if (roles.Contains("Customer"))
-                    {
-                        return LocalRedirect("~/Home/CustomerDashboard");
-                    }
+                    if (roles.Contains("Admin")) return LocalRedirect("~/Home/AdminDashboard");
+                    if (roles.Contains("Employee")) return LocalRedirect("~/Home/EmployeeDashboard");
+                    if (roles.Contains("Customer")) return LocalRedirect("~/Home/CustomerDashboard");
 
                     return LocalRedirect(returnUrl);
                 }
@@ -113,9 +104,15 @@ namespace IT15_Trojan_B.Areas.Identity.Pages.Account
                 if (result.IsLockedOut)
                 {
                     _logger.LogWarning("User account locked out.");
+                    ViewData["IsLockedOut"] = true;
+                    // 🔹 Set TempData message for lockout alert
+                    TempData["LockoutMessage"] = "Too many failed login attempts. Your account has been locked for 10 minutes.";
+
                     return RedirectToPage("./Lockout");
                 }
-                else
+
+            
+            else
                 {
                     ModelState.AddModelError(string.Empty, "Invalid login attempt.");
                     return Page();

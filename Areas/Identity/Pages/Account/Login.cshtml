@@ -15,13 +15,13 @@
     }
 </style>
 
-<div class="d-flex justify-content-center align-items-center vh-100 bg-gradient">
+<div class="d-flex justify-content-center align-items-center bg-gradient" style="height: 90vh; margin-top: -5vh;">
     <div class="card shadow-lg border-0 overflow-hidden" style="max-width: 800px; border-radius: 10px;">
         <div class="row g-0">
             <div class="col-md-6 d-none d-md-block position-relative">
                 <img src="/images/bg-construction.jpg" class="img-fluid h-100 w-100" style="object-fit: cover;" alt="Login Image">
                 <div class="position-absolute top-50 start-50 translate-middle text-black text-center px-3" style="background: rgba(255, 255, 255, 0.6); border-radius: 10px; width: 90%;">
-                    <h2 class="fw-bold">Welcome Back</h2>
+                    <h2 class="fw-bold">Welcome</h2>
                     <p class="mb-0">Please log in using your personal information to stay connected with us.</p>
                 </div>
             </div>
@@ -31,6 +31,7 @@
                 </div>
                 <h3 class="text-center fw-bold mb-4">LOGIN</h3>
                 <form id="account" method="post" onsubmit="showSpinner()">
+                    @Html.AntiForgeryToken()
                     <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
                     <div class="mb-3">
                         <label asp-for="Input.Email" class="form-label">Email</label>
@@ -58,7 +59,7 @@
                     </button>
                     <div class="text-center mt-3">
                         <a id="forgot-password" asp-page="./ForgotPassword" class="text-decoration-none" style="color: #00bcd4;">Forgot password?</a>
-                        <p class="mt-2">Don’t have an account? <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl" class="fw-bold" style="color: #00bcd4;">Signup</a></p>
+                        <p class="mt-2">Don’t have an account? <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl" class="fw-bold" style="color: #00bcd4;">Sign-up</a></p>
                     </div>
                 </form>
             </div>
@@ -66,11 +67,26 @@
     </div>
 </div>
 
+
 <script>
-    function showSpinner() {
-        document.getElementById("spinner").classList.remove("d-none");
-    }
+    document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("account");
+        const spinner = document.getElementById("spinner");
+
+        form.addEventListener("submit", function () {
+            spinner.classList.remove("d-none");
+
+            setTimeout(() => {
+                const validationSummary = document.querySelector(".text-danger[role='alert']");
+                if (validationSummary && validationSummary.innerHTML.trim() !== "") {
+                    // If there are validation errors, hide the spinner
+                    spinner.classList.add("d-none");
+                }
+            }, 500); // Delay to allow validation messages to render
+        });
+    });
 </script>
+
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

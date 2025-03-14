@@ -1,0 +1,475 @@
+﻿
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"] - Employee Dashboard </title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="~/css/styles.css">
+
+</head>
+
+<body class="@((TempData["DarkMode"] as string) == "enabled" ? "dark-mode" : "")">
+
+    <div class="d-flex" id="wrapper">
+
+        <!-- Sidebar Starts Here -->
+        <div class="sidebar" id="sidebar-wrapper">
+            <div class="sidebar-heading text-center py-3 primary-text fs-4 fw-bold text-uppercase border-bottom">
+                <img src="~/images/trojan builders_logo.png" alt="Trojan Builders Logo" class="me-2" width="40" height="40">
+            </div>
+
+            <div class="list-group list-group-flush my-3">
+                <a class="list-group-item list-group-item-action second-text fw-bold" asp-controller="Admin" asp-action="Dashboard">
+                    <i class="fas fa-home me-2"></i>Dashboard
+                </a>
+
+                <div class="item">
+                    <a class="list-group-item list-group-item-action second-text fw-bold sub-btn">
+                        <i class="fas fa-hand-holding-usd me-2"></i> Work Schedule
+                        <i class="fas fa-chevron-down float-end chevron-icon"></i>
+                    </a>
+                    <div class="sub-menu fw-bold" style="display: none;">
+                        <a class="list-group-item list-group-item-action second-text" asp-controller="Admin" asp-action="WorkOrder">Work Orders</a>
+                        <a href="#" class="list-group-item list-group-item-action second-text">In Progress</a>
+                        <a href="#" class="list-group-item list-group-item-action second-text">Completed</a>
+                    </div>
+                </div>
+
+                <div class="item">
+                    <a class="list-group-item list-group-item-action second-text fw-bold sub-btn">
+                        <i class="fas fa-boxes me-2"></i> Inventory & Equipment
+                        <i class="fas fa-chevron-down float-end chevron-icon"></i>
+                    </a>
+                    <div class="sub-menu fw-bold" style="display: none;">
+                        <a class="list-group-item list-group-item-action second-text" asp-controller="Materials" asp-action="Index">My Tools & Equipments</a>
+                        <a class="list-group-item list-group-item-action second-text" asp-controller="Admin" asp-action="Tools">Request Materials</a>
+                    </div>
+
+
+
+
+                </div>
+
+            </div>
+            <!-- Sidebar Ends Here -->
+
+            <div id="page-content-wrapper">
+                <nav class="navbar navbar-expand-lg navbar-light bg-transparent py-2 px-4">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-align-left primary-text fs-4 me-3" id="menu-toggle"></i>
+                        <h2 class="fs-2 m-0">@ViewData["Title"]</h2>
+
+                    </div>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                            <li class="nav-item">
+                                <button id="darkModeToggle" class="btn btn-secondary me-3">
+                                    <i class="fas fa-moon"></i>
+                                </button>
+                            </li>
+                            <!--User Dropdown-->
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle second-text fw-bold" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: black;">
+                                    <i class="fas fa-user me-2 text-white"></i>User
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <li>
+                                        <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Index">Profile</a>
+                                    </li>
+                                    <li>
+                                        <form method="post" asp-area="Identity" asp-page="/Account/Logout">
+                                            <button type="submit" class="dropdown-item btn w-100 text-start">Logout</button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+
+
+                <div class="container-fluid px-4">
+                    @RenderBody()
+                </div>
+            </div>
+        </div>
+
+
+
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+        <script>
+                    document.addEventListener("DOMContentLoaded", function () {
+                const darkModeToggle = document.getElementById("darkModeToggle");
+
+                if (localStorage.getItem("darkMode") === "enabled") {
+                    document.body.classList.add("dark-mode");
+                    document.getElementById("wrapper").classList.add("dark-mode");
+                    document.getElementById("sidebar-wrapper").classList.add("dark-mode");
+                    document.getElementById("page-content-wrapper").classList.add("dark-mode");
+
+                    // Apply dark mode to submenus
+                    document.querySelectorAll(".sub-menu").forEach(menu => {
+                        menu.classList.add("dark-mode");
+                    });
+
+                    // Apply dark mode to sub-menu tables
+                    document.querySelectorAll(".sub-menu table").forEach(table => {
+                        table.classList.add("dark-mode");
+                    });
+
+                    // Update dark mode toggle button icon
+                    if (darkModeToggle) {
+                        darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                    }
+                }
+
+                // Event listener for dark mode toggle button
+                if (darkModeToggle) {
+                    darkModeToggle.addEventListener("click", toggleDarkMode);
+                }
+            });
+
+            function toggleDarkMode() {
+                document.body.classList.toggle("dark-mode");
+                document.getElementById("wrapper").classList.toggle("dark-mode");
+                document.getElementById("sidebar-wrapper").classList.toggle("dark-mode");
+                document.getElementById("page-content-wrapper").classList.toggle("dark-mode");
+
+                // Apply dark mode to submenus
+                document.querySelectorAll(".sub-menu").forEach(menu => {
+                    menu.classList.toggle("dark-mode");
+                });
+
+                // Apply dark mode to all tables inside submenus
+                document.querySelectorAll("table").forEach(table => {
+                    table.classList.toggle("dark-mode");
+                });
+
+                // Store dark mode state in localStorage
+                const darkModeToggle = document.getElementById("darkModeToggle");
+                if (document.body.classList.contains("dark-mode")) {
+                    localStorage.setItem("darkMode", "enabled");
+                    if (darkModeToggle) darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                } else {
+                    localStorage.setItem("darkMode", "disabled");
+                    if (darkModeToggle) darkModeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                }
+            }
+
+
+            // Sidebar Toggle
+            document.getElementById("menu-toggle").addEventListener("click", function () {
+                document.getElementById("wrapper").classList.toggle("toggled");
+            });
+
+            // Sidebar Submenu Toggle
+                          document.addEventListener("DOMContentLoaded", function () {
+                document.querySelectorAll(".item").forEach(item => {
+                    let btn = item.querySelector(".sub-btn");
+                    let submenu = item.querySelector(".sub-menu");
+                    let chevron = item.querySelector(".chevron-icon");
+
+                    btn.addEventListener("click", function (event) {
+                        event.stopPropagation();
+
+                        let isOpen = submenu.style.display === "block";
+
+                        // Close all other submenus
+                        document.querySelectorAll(".sub-menu").forEach(menu => {
+                            menu.style.display = "none";
+                            let icon = menu.previousElementSibling.querySelector(".chevron-icon");
+                            if (icon) icon.classList.remove("rotate-chevron");
+                        });
+
+                        // Toggle the clicked menu
+                        if (!isOpen) {
+                            submenu.style.display = "block";
+                            chevron.classList.add("rotate-chevron");
+                        }
+                    });
+                });
+
+                // Close submenus when clicking outside
+                document.addEventListener("click", function (event) {
+                    if (!event.target.closest(".item")) {
+                        document.querySelectorAll(".sub-menu").forEach(menu => {
+                            menu.style.display = "none";
+                            let icon = menu.previousElementSibling.querySelector(".chevron-icon");
+                            if (icon) icon.classList.remove("rotate-chevron");
+                        });
+                    }
+                });
+            });
+
+
+        </script>
+</body>
+</html>
+
+On Tue, 11 Mar 2025 at 01:39, Harbii <sindayharveyneil@gmail.com>
+    wrote:
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.EntityFrameworkCore;
+    using TrojanBuilders.Data;
+    using TrojanBuilders.Models;
+
+    namespace TrojanBuilders.Controllers
+    {
+    public class AdminController : Controller
+    {
+    public IActionResult Dashboard()
+    {
+    return View();
+    }
+    public IActionResult WorkOrder()
+    {
+    return View();
+    }
+
+    public IActionResult Tools()
+    {
+    return View();
+    }
+    public IActionResult Safety()
+    {
+    return View();
+    }
+
+    }
+    }
+
+
+    On Tue, 11 Mar 2025 at 01:12, Harbii <sindayharveyneil@gmail.com>
+        wrote:
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>@ViewData["Title"] - Admin Dashboard</title>
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+            <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <link rel="stylesheet" href="~/css/styles.css">
+
+        </head>
+
+        <body class="@((TempData["DarkMode"] as string) == "enabled" ? "dark-mode" : "")">
+
+            <div class="d-flex" id="wrapper">
+
+                <!-- Sidebar Starts Here -->
+                <div class="sidebar" id="sidebar-wrapper">
+                    <div class="sidebar-heading text-center py-3 primary-text fs-4 fw-bold text-uppercase border-bottom">
+                        <img src="~/images/trojan builders_logo.png" alt="Trojan Builders Logo" class="me-2" width="40" height="40">
+                    </div>
+
+                    <div class="list-group list-group-flush my-3">
+                        <a class="list-group-item list-group-item-action second-text fw-bold" asp-controller="Admin" asp-action="Dashboard">
+                            <i class="fas fa-home me-2"></i>Dashboard
+                        </a>
+
+                        <div class="item">
+                            <a class="list-group-item list-group-item-action second-text fw-bold sub-btn">
+                                <i class="fas fa-hand-holding-usd me-2"></i> Projects
+                                <i class="fas fa-chevron-down float-end chevron-icon"></i>
+                            </a>
+                            <div class="sub-menu fw-bold" style="display: none;">
+                                <a class="list-group-item list-group-item-action second-text" asp-controller="Admin" asp-action="WorkOrder">Work Orders</a>
+                                <a href="#" class="list-group-item list-group-item-action second-text">In Progress</a>
+                                <a href="#" class="list-group-item list-group-item-action second-text">Completed</a>
+                            </div>
+                        </div>
+                        <a class="list-group-item list-group-item-action second-text fw-bold" asp-controller="Admin" asp-action="Customers">
+                            <i class="fas fa-users me-2"></i> Customers
+                        </a>
+                        <a class="list-group-item list-group-item-action second-text fw-bold" asp-controller="Admin" asp-action="Employees">
+                            <i class="fas fa-user-tie me-2"></i> Employees
+                        </a>
+                        <div class="item">
+                            <a class="list-group-item list-group-item-action second-text fw-bold sub-btn">
+                                <i class="fas fa-boxes me-2"></i> Inventory
+                                <i class="fas fa-chevron-down float-end chevron-icon"></i>
+                            </a>
+                            <div class="sub-menu fw-bold" style="display: none;">
+                                <a class="list-group-item list-group-item-action second-text" asp-controller="Materials" asp-action="Index">Materials</a>
+                                <a class="list-group-item list-group-item-action second-text" asp-controller="Admin" asp-action="Tools">Tools & Equipment</a>
+                                <a class="list-group-item list-group-item-action second-text" asp-controller="Admin" asp-action="Safety">Safety Equipment</a>
+                            </div>
+                        </div>
+                        <a class="list-group-item list-group-item-action second-text fw-bold" asp-controller="Admin" asp-action="Analytics">
+                            <i class="fas fa-line-chart me-2"></i> Analytics
+                        </a>
+                        <a class="list-group-item list-group-item-action second-text fw-bold" asp-controller="Admin" asp-action="Archive">
+                            <i class="fas fa-archive me-2"></i> Archive
+                        </a>
+
+                    </div>
+
+                </div>
+                <!-- Sidebar Ends Here -->
+
+                <div id="page-content-wrapper">
+                    <nav class="navbar navbar-expand-lg navbar-light bg-transparent py-2 px-4">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-align-left primary-text fs-4 me-3" id="menu-toggle"></i>
+                            <h2 class="fs-2 m-0">@ViewData["Title"]</h2>
+
+                        </div>
+                        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                                <li class="nav-item">
+                                    <button id="darkModeToggle" class="btn btn-secondary me-3">
+                                        <i class="fas fa-moon"></i>
+                                    </button>
+                                </li>
+                                <!--User Dropdown-->
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle second-text fw-bold" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: black;">
+                                        <i class="fas fa-user me-2 text-white"></i>User
+                                    </a>
+                                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                        <li>
+                                            <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Index">Profile</a>
+                                        </li>
+                                        <li>
+                                            <form method="post" asp-area="Identity" asp-page="/Account/Logout">
+                                                <button type="submit" class="dropdown-item btn w-100 text-start">Logout</button>
+                                            </form>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </nav>
+
+
+                    <div class="container-fluid px-4">
+                        @RenderBody()
+                    </div>
+                </div>
+            </div>
+
+
+
+
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+            <script>
+                        document.addEventListener("DOMContentLoaded", function () {
+                    const darkModeToggle = document.getElementById("darkModeToggle");
+
+                    if (localStorage.getItem("darkMode") === "enabled") {
+                        document.body.classList.add("dark-mode");
+                        document.getElementById("wrapper").classList.add("dark-mode");
+                        document.getElementById("sidebar-wrapper").classList.add("dark-mode");
+                        document.getElementById("page-content-wrapper").classList.add("dark-mode");
+
+                        // Apply dark mode to submenus
+                        document.querySelectorAll(".sub-menu").forEach(menu => {
+                            menu.classList.add("dark-mode");
+                        });
+
+                        // Apply dark mode to sub-menu tables
+                        document.querySelectorAll(".sub-menu table").forEach(table => {
+                            table.classList.add("dark-mode");
+                        });
+
+                        // Update dark mode toggle button icon
+                        if (darkModeToggle) {
+                            darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                        }
+                    }
+
+                    // Event listener for dark mode toggle button
+                    if (darkModeToggle) {
+                        darkModeToggle.addEventListener("click", toggleDarkMode);
+                    }
+                });
+
+                function toggleDarkMode() {
+                    document.body.classList.toggle("dark-mode");
+                    document.getElementById("wrapper").classList.toggle("dark-mode");
+                    document.getElementById("sidebar-wrapper").classList.toggle("dark-mode");
+                    document.getElementById("page-content-wrapper").classList.toggle("dark-mode");
+
+                    // Apply dark mode to submenus
+                    document.querySelectorAll(".sub-menu").forEach(menu => {
+                        menu.classList.toggle("dark-mode");
+                    });
+
+                    // Apply dark mode to all tables inside submenus
+                    document.querySelectorAll("table").forEach(table => {
+                        table.classList.toggle("dark-mode");
+                    });
+
+                    // Store dark mode state in localStorage
+                    const darkModeToggle = document.getElementById("darkModeToggle");
+                    if (document.body.classList.contains("dark-mode")) {
+                        localStorage.setItem("darkMode", "enabled");
+                        if (darkModeToggle) darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                    } else {
+                        localStorage.setItem("darkMode", "disabled");
+                        if (darkModeToggle) darkModeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                    }
+                }
+
+
+                // Sidebar Toggle
+                document.getElementById("menu-toggle").addEventListener("click", function () {
+                    document.getElementById("wrapper").classList.toggle("toggled");
+                });
+
+                // Sidebar Submenu Toggle
+                              document.addEventListener("DOMContentLoaded", function () {
+                    document.querySelectorAll(".item").forEach(item => {
+                        let btn = item.querySelector(".sub-btn");
+                        let submenu = item.querySelector(".sub-menu");
+                        let chevron = item.querySelector(".chevron-icon");
+
+                        btn.addEventListener("click", function (event) {
+                            event.stopPropagation();
+
+                            let isOpen = submenu.style.display === "block";
+
+                            // Close all other submenus
+                            document.querySelectorAll(".sub-menu").forEach(menu => {
+                                menu.style.display = "none";
+                                let icon = menu.previousElementSibling.querySelector(".chevron-icon");
+                                if (icon) icon.classList.remove("rotate-chevron");
+                            });
+
+                            // Toggle the clicked menu
+                            if (!isOpen) {
+                                submenu.style.display = "block";
+                                chevron.classList.add("rotate-chevron");
+                            }
+                        });
+                    });
+
+                    // Close submenus when clicking outside
+                    document.addEventListener("click", function (event) {
+                        if (!event.target.closest(".item")) {
+                            document.querySelectorAll(".sub-menu").forEach(menu => {
+                                menu.style.display = "none";
+                                let icon = menu.previousElementSibling.querySelector(".chevron-icon");
+                                if (icon) icon.classList.remove("rotate-chevron");
+                            });
+                        }
+                    });
+                });
+
+
+            </script>
+        </body>
+    </html>

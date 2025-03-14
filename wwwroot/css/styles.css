@@ -116,7 +116,7 @@
 }
 
 .rounded-full {
-    border-radius: 100;
+    border-radius: 100vw;
 }
 
 #wrapper {

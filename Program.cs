@@ -2,6 +2,7 @@ using IT15_Trojan_B.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using System;
 using System.Threading.Tasks;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,43 +16,66 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-// 🔹 Configure Identity with authentication settings
+// 🔹 Configure Identity with security settings
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 {
     options.SignIn.RequireConfirmedAccount = true;
+    options.Password.RequireDigit = true;
+    options.Password.RequiredLength = 12;
+    options.Password.RequireNonAlphanumeric = true;
+    options.Password.RequireUppercase = true;
+    options.Password.RequireLowercase = true;
+    options.User.RequireUniqueEmail = true;
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(10);
+    options.Lockout.MaxFailedAccessAttempts = 3;
 })
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
 
-// 🔹 Fix Logout Issues: Configure Cookie Authentication
+// 🔹 Secure Cookies & Authentication Paths
 builder.Services.ConfigureApplicationCookie(options =>
 {
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SecurePolicy = Microsoft.AspNetCore.Http.CookieSecurePolicy.Always;
     options.LoginPath = "/Identity/Account/Login";
     options.LogoutPath = "/Identity/Account/Logout";
     options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+    options.SlidingExpiration = true;
 });
 
-// 🔹 Register IEmailSender to Fix Error
+// 🔹 Register Email Service (Prevent Email Errors)
 builder.Services.AddSingleton<IEmailSender, EmailSender>();
 
 builder.Services.AddControllersWithViews();
-builder.Services.AddRazorPages();
+builder.Services.AddRazorPages()
+    .AddRazorPagesOptions(options =>
+    {
+        options.Conventions.AuthorizeAreaPage("Identity", "/Account/Manage");
+    });
 
 var app = builder.Build();
 
-// 🔹 Apply Migrations Automatically
+// 🔹 Apply Migrations & Seed Roles/Users Securely
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
-    var context = services.GetRequiredService<ApplicationDbContext>();
-    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-    var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
+    try
+    {
+        var context = services.GetRequiredService<ApplicationDbContext>();
+        var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+        var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
 
-    context.Database.Migrate(); // ✅ Auto-run migrations
-    await SeedRolesAndUsers(roleManager, userManager);
+        context.Database.Migrate(); // ✅ Auto-run migrations
+        SeedRolesAndUsers(roleManager, userManager).GetAwaiter().GetResult(); // ✅ Ensure it's run synchronously
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred while seeding the database.");
+    }
 }
 
-// 🔹 Configure Middleware
+// 🔹 Configure Middleware (Ensure Correct Order)
 if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
@@ -64,7 +88,9 @@ else
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-app.UseRouting();
+
+app.UseRouting(); // ✅ Correct order
+
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -72,31 +98,30 @@ app.UseAuthorization();
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllerRoute(
+        name: "adminDashboard",
+        pattern: "Home/AdminDashboard",
+        defaults: new { controller = "Home", action = "AdminDashboard" });
+
+    endpoints.MapControllerRoute(
         name: "employeeDashboard",
-        pattern: "Home/Dashboard",
+        pattern: "Home/EmployeeDashboard",
         defaults: new { controller = "Home", action = "EmployeeDashboard" });
 
     endpoints.MapControllerRoute(
         name: "customerDashboard",
-        pattern: "Home/Dashboard",
+        pattern: "Home/CustomerDashboard",
         defaults: new { controller = "Home", action = "CustomerDashboard" });
-
-    endpoints.MapControllerRoute(
-    name: "adminDashboard",
-    pattern: "Home/AdminDashboard",
-    defaults: new { controller = "Home", action = "AdminDashboard" });
-
 
     endpoints.MapControllerRoute(
         name: "default",
         pattern: "{controller=Home}/{action=Index}/{id?}");
 
-    endpoints.MapRazorPages();
+    endpoints.MapRazorPages(); // ✅ Ensure Razor Pages are mapped
 });
 
 app.Run();
 
-// 🔹 Role Seeding Method
+// 🔹 Role & User Seeding Method (Run Synchronously)
 async Task SeedRolesAndUsers(RoleManager<IdentityRole> roleManager, UserManager<IdentityUser> userManager)
 {
     string[] roleNames = { "Admin", "Employee", "Customer" };
@@ -109,32 +134,43 @@ async Task SeedRolesAndUsers(RoleManager<IdentityRole> roleManager, UserManager<
         }
     }
 
-    // 🔹 Create Admin User
+    // 🔹 Secure Admin User Creation
     var adminEmail = "admin@trojanbuilders.com";
-    var adminUser = await userManager.FindByEmailAsync(adminEmail);
-    if (adminUser == null)
-    {
-        var newAdmin = new IdentityUser { UserName = adminEmail, Email = adminEmail, EmailConfirmed = true };
-        await userManager.CreateAsync(newAdmin, "Admin@123");
-        await userManager.AddToRoleAsync(newAdmin, "Admin");
-    }
+    var adminPassword = "Admin@Secure123"; // ✅ Strong Password
+    await CreateUserIfNotExists(userManager, adminEmail, adminPassword, "Admin");
 
-    // 🔹 Create a Test Employee User
+    // 🔹 Secure Employee User Creation
     var employeeEmail = "employee@trojanbuilders.com";
-    var employeeUser = await userManager.FindByEmailAsync(employeeEmail);
-    if (employeeUser == null)
+    var employeePassword = "Employee@Secure123"; // ✅ Strong Password
+    await CreateUserIfNotExists(userManager, employeeEmail, employeePassword, "Employee");
+}
+
+// 🔹 Helper Function for Secure User Creation
+async Task CreateUserIfNotExists(UserManager<IdentityUser> userManager, string email, string password, string role)
+{
+    var user = await userManager.FindByEmailAsync(email);
+    if (user == null)
     {
-        var newEmployee = new IdentityUser { UserName = employeeEmail, Email = employeeEmail, EmailConfirmed = true };
-        await userManager.CreateAsync(newEmployee, "Employee@123");
-        await userManager.AddToRoleAsync(newEmployee, "Employee");
+        var newUser = new IdentityUser
+        {
+            UserName = email,
+            Email = email,
+            EmailConfirmed = true // ✅ Required for login security
+        };
+
+        var result = await userManager.CreateAsync(newUser, password);
+        if (result.Succeeded)
+        {
+            await userManager.AddToRoleAsync(newUser, role);
+        }
     }
 }
 
-// 🔹 Fake Email Sender Implementation
+// 🔹 Fake Email Sender Implementation (Prevents Email Errors)
 public class EmailSender : IEmailSender
 {
     public Task SendEmailAsync(string email, string subject, string htmlMessage)
     {
-        return Task.CompletedTask; // This prevents email-related errors
+        return Task.CompletedTask; // ✅ Avoids email-related errors
     }
 }

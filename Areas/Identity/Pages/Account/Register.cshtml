@@ -11,18 +11,17 @@
     html, body {
         height: 100vh;
         margin: 0;
-        overflow: hidden;
     }
 </style>
 
-<div class="d-flex justify-content-center align-items-center min-vh-100">
+<div class="d-flex justify-content-center align-items-center" style="height: 90vh; margin-top: -5vh;">
     <div class="card shadow-lg" style="width: 40rem; border-radius: 10px; overflow: hidden;">
         <div class="p-5 bg-white position-relative">
             <!-- Close Button -->
             <button type="button" class="btn-close position-absolute top-0 end-0 m-3"
                     aria-label="Close" onclick="window.location.href='/'"></button>
 
-            <h3 class="text-center fw-bold">Customer Resgistration</h3>
+            <h3 class="text-center fw-bold">Customer Registration</h3>
             <form asp-route-returnUrl="@Model.ReturnUrl" method="post" id="registerForm">
                 <div class="mb-3">
                     <div class="input-group">
@@ -72,14 +71,61 @@
                     <span asp-validation-for="Input.ConfirmPassword" class="text-danger form-text"></span>
                 </div>
 
+                <!-- Terms and Conditions Modal -->
+                <div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content shadow-lg">
+                            <div class="modal-header bg-primary text-white">
+                                <h5 class="modal-title fw-bold" id="termsModalLabel">Terms and Conditions</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body p-4" style="max-height: 500px; overflow-y: auto;">
+                                <h6 class="fw-bold">1. Introduction</h6>
+                                <p>By using this software, you agree to the following terms and conditions. Failure to comply may result in restricted access.</p>
+
+                                <h6 class="fw-bold">2. User Responsibilities</h6>
+                                <ul>
+                                    <li>Users must provide accurate and up-to-date information.</li>
+                                    <li>The system is strictly for lawful construction management purposes.</li>
+                                    <li>Unauthorized access or misuse of the system is prohibited.</li>
+                                </ul>
+
+                                <h6 class="fw-bold">3. Data Privacy</h6>
+                                <p>User data is securely stored and is not shared with third parties.</p>
+
+                                <h6 class="fw-bold">4. System Modifications</h6>
+                                <p>The administrators reserve the right to modify these terms at any time.</p>
+
+                                <h6 class="fw-bold">5. Acceptance</h6>
+                                <p>By continuing, you confirm that you accept and agree to abide by these Terms and Conditions.</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Accept</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Terms and Conditions Checkbox -->
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="termsCheck">
+                    <label class="form-check-label" for="termsCheck">
+                        By clicking 'Sign-up' you agree to our <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">Terms and Conditions.</a>
+                    </label>
+                    <div class="text-danger d-none" id="termsError">You must accept the terms and conditions.</div>
+                </div>
+
                 <div class="d-grid">
                     <button type="submit" class="btn btn-info text-white" id="submitBtn">
                         <span class="spinner-border spinner-border-sm d-none" id="spinner"></span>
                         Sign-up
                     </button>
                 </div>
+
                 <div class="text-center mt-3">
-                    <span>Already have an account?</span> <a asp-page="/Account/Login">Sign-in</a>
+                    <span>Already have an account?</span>
+                    <a asp-page="/Account/Login" class="fw-bold" style="color: #00bcd4;">Sign-in</a>
                 </div>
             </form>
         </div>
@@ -89,12 +135,48 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
-        document.getElementById("registerForm").addEventListener("submit", function () {
-            var submitBtn = document.getElementById("submitBtn");
-            var spinner = document.getElementById("spinner");
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.getElementById("registerForm");
+            const submitBtn = document.getElementById("submitBtn");
+            const spinner = document.getElementById("spinner");
+            const termsCheck = document.getElementById("termsCheck");
+            const termsError = document.getElementById("termsError");
 
-            submitBtn.disabled = true;
-            spinner.classList.remove("d-none");
+            form.addEventListener("submit", function (event) {
+                console.log("Form submission started..."); // Debugging line
+
+                // Validate terms checkbox
+                if (!termsCheck.checked) {
+                    event.preventDefault(); // Prevent form submission
+                    termsError.classList.remove("d-none");
+                    console.log("Terms not checked, form submission prevented.");
+                    return;
+                }
+
+                termsError.classList.add("d-none");
+                submitBtn.disabled = true;
+                spinner.classList.remove("d-none");
+                console.log("Spinner should be visible now.");
+
+                // Delay to check for validation errors after the form submits
+                setTimeout(() => {
+                    const validationErrors = document.querySelectorAll(".text-danger.form-text");
+                    let hasErrors = false;
+
+                    validationErrors.forEach(error => {
+                        if (error.innerHTML.trim() !== "") {
+                            hasErrors = true;
+                        }
+                    });
+
+                    if (hasErrors) {
+                        console.log("Validation errors found, resetting button and hiding spinner.");
+                        submitBtn.disabled = false;
+                        spinner.classList.add("d-none");
+                    }
+                }, 500); // Small delay to allow validation errors to render
+            });
         });
     </script>
+
 }
