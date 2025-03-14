@@ -27,35 +27,79 @@
                 </div>
             </div>
             </div>  -->
-
-        <!-- Active Job Orders -->
-        <div class="col-md-12 mb-3">
-            <div class="card shadow rounded-3 border-0">
-                <div class="card-header bg-info text-white fw-bold">Active Job Orders</div>
-                <div class="card-body">
-                    <table class="table table-hover">
-                        <thead class="table-light">
-                            <tr>
-                                <th>Status</th>
-                                <th>Estimated Completion</th>
-                                <th>Details</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><span class="badge bg-warning text-dark">In Progress</span></td>
-                                <td>March 15, 2025</td>
-                                <td><a href="#" class="btn btn-outline-primary btn-sm"><i class="bi bi-eye"></i> View</a></td>
-                            </tr>
-                        </tbody>
-                    </table>
+            <!-- Active Job Orders Section -->
+            <div class="col-md-12 mb-3">
+                <div class="card shadow rounded-3 border-4">
+                    <div class="card-header bg-info text-white fw-bold d-flex justify-content-between align-items-center">
+                        <span><i class="bi bi-clipboard-check"></i> Active Job Orders</span>
+                        <span class="badge bg-dark">Total: 1</span>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Job Type</th>
+                                    <th>Assigned Contractor</th>
+                                    <th>Status</th>
+                                    <th>Estimated Completion</th>
+                                    <th>Details</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><i class="bi bi-tools"></i> General Contracting</td>
+                                    <td><i class="bi bi-person-circle"></i> John Smith</td>
+                                    <td><span class="badge bg-warning text-dark">In Progress</span></td>
+                                    <td><i class="bi bi-calendar-event"></i> March 15, 2025</td>
+                                    <td>
+                                        <button class="btn btn-outline-primary btn-sm" onclick="showJobDetails(
+                                'INV-2025001', 'General Contracting', 'John Smith', 'In Progress',
+                                'March 15, 2025', 'New York, NY', 'John Doe',
+                                'Renovation of a 2-bedroom house.', 'Cement, Wood, Paint',
+                                500, 1500
+                            )">
+                                            <i class="bi bi-eye"></i> View
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
-        </div>
+
+            <!-- Job Order Details Modal -->
+            <div id="jobOrderModal" class="modal fade" tabindex="-1" role="dialog">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header bg-primary text-white">
+                            <h5 class="modal-title"><i class="bi bi-file-earmark-text"></i> Job Order Details</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p><strong>Job ID:</strong> <span id="jobId"></span></p>
+                            <p><strong>Customer Name:</strong> <span id="customerName"></span></p>
+                            <p><strong>Job Type:</strong> <span id="jobType"></span></p>
+                            <p><strong>Assigned Contractor:</strong> <span id="jobContractor"></span></p>
+                            <p><strong>Status:</strong> <span id="jobStatus" class="badge"></span></p>
+                            <p><strong>Estimated Completion:</strong> <span id="jobCompletion"></span></p>
+                            <p><strong>Location:</strong> <span id="jobLocation"></span></p>
+                            <p><strong>Job Description:</strong> <span id="jobDescription"></span></p>
+                            <p><strong>Materials Used:</strong> <span id="jobMaterials"></span></p>
+                            <p><strong>Labor Cost:</strong> $<span id="jobLaborCost"></span></p>
+                            <p><strong>Total Cost:</strong> $<span id="jobTotalCost"></span></p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
 
         <!-- Order History -->
         <div class="col-md-12 mb-3">
-            <div class="card shadow rounded-3 border-0">
+            <div class="card shadow rounded-3 border-4">
                 <div class="card-header bg-secondary text-white fw-bold">Order History</div>
                 <div class="card-body">
                     <table class="table table-hover">
@@ -91,7 +135,7 @@
 
         <!-- Add New Project -->
         <div class="col-md-12 mb-3">
-            <div class="card shadow rounded-3 border-0">
+            <div class="card shadow rounded-3 border-4">
                 <div class="card-header bg-success text-white fw-bold">New Project</div>
                 <div class="card-body text-center">
                     <a href="#" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#addProjectModal">
@@ -138,7 +182,7 @@
 
         <!-- Billing & Payments -->
         <div class="col-md-12 mb-3">
-            <div class="card shadow rounded-3 border-0">
+            <div class="card shadow rounded-3 border-4">
                 <div class="card-header bg-dark text-white fw-bold">Billing & Payments</div>
                 <div class="card-body text-center">
                     <button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#invoiceModal">
@@ -309,7 +353,29 @@
     function printInvoice() {
         window.print();
     }
+             function showJobDetails(jobId, jobType, contractor, status, completionDate, location, customerName, jobDescription, jobMaterials, laborCost, totalCost) {
+            document.getElementById("jobId").innerText = jobId;
+            document.getElementById("customerName").innerText = customerName;
+            document.getElementById("jobType").innerText = jobType;
+            document.getElementById("jobContractor").innerText = contractor;
+            document.getElementById("jobStatus").innerText = status;
+            document.getElementById("jobCompletion").innerText = completionDate;
+            document.getElementById("jobLocation").innerText = location;
+            document.getElementById("jobDescription").innerText = jobDescription;
+            document.getElementById("jobMaterials").innerText = jobMaterials;
+            document.getElementById("jobLaborCost").innerText = laborCost;
+            document.getElementById("jobTotalCost").innerText = totalCost;
 
+            // Update status badge color
+            let statusBadge = document.getElementById("jobStatus");
+            statusBadge.className = "badge"; // Reset previous class
+            if (status === "In Progress") statusBadge.classList.add("bg-warning", "text-dark");
+            else if (status === "Completed") statusBadge.classList.add("bg-success");
+            else statusBadge.classList.add("bg-secondary");
+
+            var myModal = new bootstrap.Modal(document.getElementById("jobOrderModal"));
+            myModal.show();
+        }
     // Initialize Bootstrap Tooltips
     document.addEventListener("DOMContentLoaded", function () {
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
