@@ -7,19 +7,7 @@
     var isDashboard = ViewContext.RouteData.Values["Action"]?.ToString()?.Contains("Dashboard") ?? false;
 }
 
-<ul class="navbar-nav">
-    @if (!isDashboard) // Hide these links on dashboard pages
-    {
-        <li class="nav-item">
-            <a class="nav-link custom-nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link custom-nav-link" href="#about-us">About</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link custom-nav-link" href="#contact-us">Contact</a>
-        </li>
-    }
+<ul class="navbar-nav sticky-navbar">
 
     @if (SignInManager.IsSignedIn(User))
     {

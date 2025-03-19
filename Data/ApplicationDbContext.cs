@@ -12,15 +12,29 @@ namespace IT15_Trojan_B.Data
         }
 
         // Define database tables correctly
+
+        public DbSet<WorkOrder> WorkOrders { get; set; }
         public DbSet<Employee> Employees { get; set; }
+        public DbSet<Material> Materials { get; set; }
+        public DbSet<SafetyEquipment> SafetyEquipments { get; set; }
+        public DbSet<ToolEquipment> ToolEquipments { get; set; }
+
         public DbSet<Order> Orders { get; set; }
         public DbSet<Appointment> Appointments { get; set; }
         public DbSet<Payment> Payments { get; set; }
-        
 
-        protected override void OnModelCreating(ModelBuilder builder)
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(builder);
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Material>()
+           .Property(m => m.Price)
+           .HasColumnType("decimal(18,2)");
+
+            modelBuilder.Entity<SafetyEquipment>()
+        .Property(se => se.Price)
+        .HasColumnType("decimal(18,2)");
         }
     }
 }

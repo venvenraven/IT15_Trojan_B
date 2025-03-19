@@ -38,6 +38,12 @@ namespace IT15_Trojan_B.Areas.Identity.Pages.Account.Manage
 
         public class InputModel
         {
+            [Display(Name = "Full Name")]
+            public string FullName { get; set; }
+
+            [Display(Name = "Address")]
+            public string Address { get; set; }
+
             [Phone]
             [Display(Name = "Phone number")]
             public string PhoneNumber { get; set; }
@@ -48,10 +54,9 @@ namespace IT15_Trojan_B.Areas.Identity.Pages.Account.Manage
             var userName = await _userManager.GetUserNameAsync(user);
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
 
-            // ✅ Retrieve Full Name & Address from Claims
-            var claims = await _userManager.GetClaimsAsync(user);
-            FullName = claims.FirstOrDefault(c => c.Type == "FullName")?.Value;
-            Address = claims.FirstOrDefault(c => c.Type == "Address")?.Value;
+            // ✅ Retrieve Full Name & Address from the Database
+            FullName = user.GetType().GetProperty("FullName")?.GetValue(user, null)?.ToString();
+            Address = user.GetType().GetProperty("Address")?.GetValue(user, null)?.ToString();
 
             Username = userName;
 
@@ -60,6 +65,7 @@ namespace IT15_Trojan_B.Areas.Identity.Pages.Account.Manage
                 PhoneNumber = phoneNumber
             };
         }
+
 
         public async Task<IActionResult> OnGetAsync()
         {
@@ -98,9 +104,20 @@ namespace IT15_Trojan_B.Areas.Identity.Pages.Account.Manage
                 }
             }
 
+            // ✅ Update Full Name & Address
+            user.GetType().GetProperty("FullName")?.SetValue(user, Input.FullName);
+            user.GetType().GetProperty("Address")?.SetValue(user, Input.Address);
+
+            var updateResult = await _userManager.UpdateAsync(user);
+            if (!updateResult.Succeeded)
+            {
+                StatusMessage = "Unexpected error when updating your profile.";
+                return RedirectToPage();
+            }
+
             await _signInManager.RefreshSignInAsync(user);
             StatusMessage = "Your profile has been updated";
             return RedirectToPage();
         }
+      }
     }
-}

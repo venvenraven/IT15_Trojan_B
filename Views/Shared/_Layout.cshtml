@@ -1,24 +1,23 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>@ViewData["Title"] - IT15_Trojan_B</title>
-        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-        <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-        <link rel="stylesheet" href="~/IT15_Trojan_B.styles.css" asp-append-version="true" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - IT15_Trojan_B</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/IT15_Trojan_B.styles.css" asp-append-version="true" />
 
-        <!-- Bootstrap Icons -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.1/font/bootstrap-icons.min.css">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.1/font/bootstrap-icons.min.css">
 
-        <!-- FontAwesome for Icons -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-   
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-lg custom-navbar">
-            <div class="container-fluid">
+        <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top py-2">
+            <div class="container">
                 <a class="navbar-brand d-flex align-items-center" href="/">
                     <img src="~/images/tb.png" alt="Logo" class="navbar-logo me-2">
                     <span class="navbar-text fw-bold">Trojan Builders</span>
@@ -28,19 +27,36 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                    <ul class="navbar-nav align-items-center">
+                        <!-- Always show Home button -->
+                        <li class="nav-item">
+                            <a class="nav-link custom-nav-link" asp-area="" asp-controller="Home" asp-action="Index">HOME</a>
+                        </li>
 
-                    <partial name="_LoginPartial" />
+                        <!-- Show About and Contact buttons only on the Homepage -->
+                        @if (!Context.Request.Path.StartsWithSegments("/Identity/Account/Register")  && !Context.Request.Path.StartsWithSegments("/EmployeeRegister/Register") && !Context.Request.Path.StartsWithSegments("/Identity/Account/Login"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link custom-nav-link" href="#about-us">ABOUT</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link custom-nav-link" href="#contact-us">CONTACT</a>
+                            </li>
+                        }
+
+                        <!-- Include the login partial -->
+                        <partial name="_LoginPartial" />
+                    </ul>
                 </div>
             </div>
         </nav>
     </header>
 
-    <div class="container">
-        <main role="main" class="pb-3">
+    <div class="container-fluid p-0">
+        <main role="main">
             @RenderBody()
         </main>
     </div>
-
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

@@ -1,0 +1,300 @@
+﻿@model List<IT15_Trojan_B.Models.ToolEquipment>
+
+
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Tools & Equipments Inventory";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="~/css/styles.css" asp-append-version="true" />
+
+
+</head>
+<style>
+    .form-label {
+        color: black !important;
+        font-weight: bold;
+    }
+
+    .modal-title {
+        color: black !important;
+        font-weight: bold;
+    }
+</style>
+<body>
+    <div class="container mt-5 px-4">
+        <!-- Add Tools Button -->
+        <div class="row my-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <button class="btn btn-sm btn-secondary" data-bs-toggle="modal" data-bs-target="#addToolModal">
+                    <i class="fas fa-plus-circle"></i> Add Tools
+                </button>
+                <input type="text" id="searchInput" class="form-control form-control-sm w-25" placeholder="Search...">
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div class="col table-responsive">
+            <table class="table table-hover rounded shadow-sm" id="toolsTable">
+                <thead>
+                    <tr>
+                        <th scope="col" class="text-center">Tool Category</th>
+                        <th scope="col" class="text-center">Name</th>
+                        <th scope="col" class="text-center">Quantity</th>
+                        <th scope="col" class="text-center">Brand</th>
+                        <th scope="col" class="text-center">Supplier</th>
+                        <th scope="col" class="text-center">Price</th>
+                        <th scope="col" class="text-center">Condition</th>
+                        <th scope="col" class="text-center">Date Acquired</th>
+                        <th scope="col" class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="toolEquipmentTableBody">
+                   
+                        @foreach (var toolEquipment in Model)
+                        {
+                            <tr class="text-center" data-id="@toolEquipment.Id">
+                                <td>@toolEquipment.Category</td>
+                                <td>@toolEquipment.Name</td>
+                                <td>@toolEquipment.Quantity</td>
+                                <td>@toolEquipment.Brand</td>
+                                <td>@toolEquipment.Supplier</td>
+                                <td>₱@toolEquipment.Price.ToString("N2")</td>
+                                <td>@toolEquipment.Condition</td>
+                                <td>@toolEquipment.DateAcquired.ToString("yyyy-MM-dd")</td>
+                                <td>
+                                    <button class="btn btn-sm btn-info edit-btn"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-sm btn-secondary archive-btn"><i class="fas fa-archive"></i></button>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    
+                </tbody>
+
+
+            </table>
+            
+        </div>
+    </div>
+
+    <!-- ADD TOOLS MODAL -->
+    <div class="modal fade" id="addToolModal" tabindex="-1" aria-labelledby="addToolLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addToolLabel" style="color: black; font-weight: bold;">Add Tools & Equipments</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <select id="toolCategory" class="form-control mb-2">
+                        <option value="">Select Category</option>
+                        <option value="Power Tools">Hand Tools</option>
+                        <option value="Hand Tools">Power Tools</option>
+                        <option value="Heavy Equipment">Heavy Equipment</option>
+                        <option value="Scaffolding">Scaffolding</option>
+                        <option value="Lifting Equipment">Lifting Equipment</option>
+                    </select>
+                    <input type="text" id="toolName" class="form-control mb-2" placeholder="Tool Name">
+                    <input type="number" id="toolQuantity" class="form-control mb-2" placeholder="Quantity">
+                    <input type="text" id="toolBrand" class="form-control mb-2" placeholder="Brand">
+                    <input type="text" id="toolSupplier" class="form-control mb-2" placeholder="Supplier">
+                    <input type="number" id="toolPrice" class="form-control mb-2" placeholder="Price">
+
+                    <select id="toolCondition" class="form-control mb-2">
+                        <option value="" disabled selected>Select Condition</option>
+                        <option value="Brand New">Brand New</option>
+                        <option value="Used">Used</option>
+                        <option value="Broken">Broken</option>
+                    </select>
+                    <input type="date" id="toolDateAcquired" class="form-control mb-2">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="saveTool">Save</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- EDIT TOOLS MODAL -->
+    <div class="modal fade" id="editToolModal" tabindex="-1" aria-labelledby="editToolLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Tools & Equipments</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-2">
+                        <label for="editToolCategory" class="form-label">Category:</label>
+                        <select id="editToolCategory" class="form-control">
+                            <option value="" disabled selected>Select Category:</option>
+                            <option value="Hand Tools">Hand Tools</option>
+                            <option value="Power Tools">Power Tools</option>
+                            <option value="Heavy Equipment">Heavy Equipment</option>
+                            <option value="Scaffolding">Scaffolding</option>
+                            <option value="Lifting Equipment">Lifting Equipment</option>
+                        </select>
+                    </div>
+                    <div class="mb-2">
+                        <label for="editToolName" class="form-label">Tool Name:</label>
+                        <input type="text" id="editToolName" class="form-control">
+                    </div>
+                    <div class="mb-2">
+                        <label for="editToolQuantity" class="form-label">Quantity:</label>
+                        <input type="number" id="editToolQuantity" class="form-control">
+                    </div>
+                    <div class="mb-2">
+                        <label for="editToolBrand" class="form-label">Brand:</label>
+                        <input type="text" id="editToolBrand" class="form-control">
+                    </div>
+                    <div class="mb-2">
+                        <label for="editToolSupplier" class="form-label">Supplier:</label>
+                        <input type="text" id="editToolSupplier" class="form-control">
+                    </div>
+                    <div class="mb-2">
+                        <label for="editToolPrice" class="form-label">Price:</label>
+                        <input type="number" id="editToolPrice" class="form-control">
+                    </div>
+
+                    <div class="mb-2">
+                        <label for="editToolCondition" class="form-label">Condition:</label>
+                        <select id="editToolCondition" class="form-control">
+                            <option value="" disabled selected>Select Condition</option>
+                            <option value="Brand New">Brand New</option>
+                            <option value="Used">Used</option>
+                            <option value="Broken">Broken</option>
+                        </select>
+                    </div>
+                    <div class="mb-2">
+                        <label for="editToolDateAcquired" class="form-label">Date Acquired:</label>
+                        <input type="date" id="editToolDateAcquired" class="form-control">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="updateTool">Update</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+    // REAL-TIME TABLE SEARCH
+    document.getElementById("searchInput").addEventListener("keyup", function () {
+        let filter = this.value.toLowerCase();
+        let rows = document.querySelectorAll("#toolEquipmentTableBody tr");
+
+        rows.forEach(row => {
+            let text = row.innerText.toLowerCase();
+            row.style.display = text.includes(filter) ? "" : "none";
+        });
+    });
+
+    // ADD TOOL EQUIPMENT
+    document.getElementById('saveTool').addEventListener('click', function () {
+        let toolEquipment = {
+            Category: document.getElementById('toolCategory').value,
+            Name: document.getElementById('toolName').value,
+            Quantity: document.getElementById('toolQuantity').value,
+            Brand: document.getElementById('toolBrand').value,
+            Supplier: document.getElementById('toolSupplier').value,
+            Price: document.getElementById('toolPrice').value,
+            Condition: document.getElementById('toolCondition').value,
+            DateAcquired: document.getElementById('toolDateAcquired').value || new Date().toISOString().split('T')[0]
+        };
+
+        if (Object.values(toolEquipment).some(value => !value)) {
+            Swal.fire("Error!", "Please fill in all fields.", "error");
+            return;
+        }
+
+        fetch('/ToolEquipment/AddToolEquipment', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(toolEquipment)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                Swal.fire("Success!", "Tool Equipment added successfully.", "success").then(() => location.reload());
+            } else {
+                Swal.fire("Error!", "Failed to add Tool Equipment.", "error");
+            }
+        });
+    });
+
+    // HANDLE EDIT BUTTON CLICK
+    document.addEventListener("click", function (event) {
+        if (event.target.closest(".edit-btn")) {
+            let row = event.target.closest("tr");
+            let id = row.getAttribute("data-id");
+            
+            document.getElementById("editToolEquipmentId").value = id;
+            document.getElementById("editToolCategory").value = row.children[0].innerText;
+            document.getElementById("editToolName").value = row.children[1].innerText;
+            document.getElementById("editToolQuantity").value = row.children[2].innerText;
+            document.getElementById("editToolBrand").value = row.children[3].innerText;
+            document.getElementById("editToolSupplier").value = row.children[4].innerText;
+            document.getElementById("editToolPrice").value = row.children[5].innerText;
+            document.getElementById("editToolCondition").value = row.children[6].innerText;
+            document.getElementById("editToolDateAcquired").value = row.children[7].innerText;
+
+            let editModal = new bootstrap.Modal(document.getElementById("editToolModal"));
+            editModal.show();
+        }
+    });
+
+    // ARCHIVE TOOL EQUIPMENT
+    document.addEventListener("click", function (event) {
+        if (event.target.closest(".archive-btn")) {
+            let row = event.target.closest("tr");
+            let id = row.getAttribute("data-id");
+
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You are about to archive this Tool Equipment!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Yes, archive it!",
+                cancelButtonText: "Cancel"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch('/ToolEquipment/ArchiveToolEquipment', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ id: id })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            row.remove();
+                            Swal.fire("Archived!", "Tool Equipment has been archived.", "success");
+                        } else {
+                            Swal.fire("Error!", "Failed to archive Tool Equipment.", "error");
+                        }
+                    });
+                }
+            });
+        }
+    });
+});
+
+
+
+    </script>
+</body>
+</html>

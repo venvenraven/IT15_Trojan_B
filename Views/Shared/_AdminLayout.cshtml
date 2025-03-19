@@ -17,8 +17,8 @@
 
         <!-- Sidebar Starts Here -->
         <div class="sidebar" id="sidebar-wrapper">
-            <div class="sidebar-heading text-center py-2 primary-text fs-4 fw-bold text-uppercase border-bottom">
-                <img src="/images/tb.PNG" alt="Trojan Builders Logo" width="40" height="40" class="me-2"> Trojan Builders
+            <div class="sidebar-heading text-center py-3 primary-text fs-4 fw-bold text-uppercase border-bottom">
+                <img src="~/images/trojan builders_logo.png" alt="Trojan Builders Logo" class="me-2" width="40" height="40">
             </div>
 
             <div class="list-group list-group-flush my-3">
@@ -32,7 +32,7 @@
                         <i class="fas fa-chevron-down float-end chevron-icon"></i>
                     </a>
                     <div class="sub-menu fw-bold" style="display: none;">
-                        <a href="#" class="list-group-item list-group-item-action second-text">Work Orders</a>
+                        <a class="list-group-item list-group-item-action second-text" asp-controller="Admin" asp-action="WorkOrder">Work Orders</a>
                         <a href="#" class="list-group-item list-group-item-action second-text">In Progress</a>
                         <a href="#" class="list-group-item list-group-item-action second-text">Completed</a>
                     </div>
@@ -49,7 +49,7 @@
                         <i class="fas fa-chevron-down float-end chevron-icon"></i>
                     </a>
                     <div class="sub-menu fw-bold" style="display: none;">
-                        <a class="list-group-item list-group-item-action second-text" asp-controller="Materials" asp-action="Materials">Materials</a>
+                        <a class="list-group-item list-group-item-action second-text" asp-controller="Materials" asp-action="Index">Materials</a>
                         <a class="list-group-item list-group-item-action second-text" asp-controller="Admin" asp-action="Tools">Tools & Equipment</a>
                         <a class="list-group-item list-group-item-action second-text" asp-controller="Admin" asp-action="Safety">Safety Equipment</a>
                     </div>
@@ -60,9 +60,7 @@
                 <a class="list-group-item list-group-item-action second-text fw-bold" asp-controller="Admin" asp-action="Archive">
                     <i class="fas fa-archive me-2"></i> Archive
                 </a>
-                <a class="list-group-item list-group-item-action second-text fw-bold" asp-area="Identity" asp-page="/Account/Login>
-                    <i class="fas fa-share-square me-2"></i> Logout
-                </a>
+
             </div>
 
         </div>
@@ -73,19 +71,29 @@
                 <div class="d-flex align-items-center">
                     <i class="fas fa-align-left primary-text fs-4 me-3" id="menu-toggle"></i>
                     <h2 class="fs-2 m-0">@ViewData["Title"]</h2>
-                    <button id="darkModeToggle" class="btn btn-secondary m-3">
-                        <i class="fas fa-moon"></i>
-                    </button>
+
                 </div>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <button id="darkModeToggle" class="btn btn-secondary me-3">
+                                <i class="fas fa-moon"></i>
+                            </button>
+                        </li>
+                        <!--User Dropdown-->
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle second-text fw-bold" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <a class="nav-link dropdown-toggle second-text fw-bold" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: black;">
                                 <i class="fas fa-user me-2 text-white"></i>User
                             </a>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                <li><a class="dropdown-item" href="#">Profile</a></li>
-                                <li><a class="dropdown-item" href="/Identity/Account/Login">Logout</a></li>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li>
+                                    <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Index">Profile</a>
+                                </li>
+                                <li>
+                                    <form method="post" asp-area="Identity" asp-page="/Account/Logout">
+                                        <button type="submit" class="dropdown-item btn w-100 text-start">Logout</button>
+                                    </form>
+                                </li>
                             </ul>
                         </li>
                     </ul>

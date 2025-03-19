@@ -47,28 +47,21 @@ body {
 
 .custom-nav-link {
     position: relative;
-    font-weight: bold;
+    font-weight: normal;
     color: black !important; 
-    padding: 10px 15px;
-    border-radius: 5px;
-    transition: all 0.3s ease-in-out;
     text-transform: uppercase;
 }
 
 .custom-nav-link:hover {
     color: deepskyblue !important; 
     background: rgba(255, 255, 255, 0.2); 
-    transform: scale(1.1); 
-    border-radius: 8px;
+   
 }
 
 .custom-nav-link::after {
     content: "";
     display: block;
-    width: 0;
-    height: 3px;
     background: deepskyblue;
-    transition: width 0.3s ease-in-out;
 }
 
 .custom-nav-link:hover::after {

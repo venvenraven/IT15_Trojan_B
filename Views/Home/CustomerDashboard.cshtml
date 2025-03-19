@@ -1,4 +1,6 @@
-﻿
+﻿@{
+    ViewData["Title"] = "Customer Dashboard";
+}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -10,29 +12,62 @@
     <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="~/css/styles.css">
-
 </head>
 <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top py-2">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <img src="~/images/tb.png" alt="Logo" class="navbar-logo me-2">
+                <span class="navbar-text fw-bold">Trojan Builders</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav align-items-center">
+                    <!-- Customer-specific links -->
+                    <li class="nav-item">
+                        <a class="nav-link custom-nav-link" href="@Url.Action("CustomerDashboard", "Home")"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link custom-nav-link" href="#activeJobOrders" id="orderLink">
+                            <i class="fas fa-shopping-cart"></i> Orders
+                        </a>
+
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link custom-nav-link" href="@Url.Action("CustomerProfile", "Home")">
+                            <i class="fas fa-user-circle"></i> Profile
+                        </a>
+                    </li>
 
 
-
-<div class="container mt-4">
-    <div class="row">
-        <!-- Welcome Panel
-        <div class="col-md-12 mb-3">
-            <div class="card shadow rounded-3 border-0">
-                <div class="card-body text-left">
-                    <h4 class="card-title fw-bold">Welcome, <span id="customerName">John Doe</span></h4>
-                    <p class="text-muted">Active Projects: <span id="activeOrdersCount">3</span></p>
-                </div>
+                    <li class="nav-item">
+                        <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                            <button type="submit" class="nav-link btn btn-link custom-nav-link">
+                                <i class="fas fa-sign-out-alt"></i> Logout
+                            </button>
+                        </form>
+                    </li>
+                </ul>
             </div>
-            </div>  -->
-            <!-- Active Job Orders Section -->
-            <div class="col-md-12 mb-3">
+        </div>
+    </nav>
+
+    <div class="container" style="margin-top: 100px;">
+        <h1>Hi, Customer!</h1>
+        <p>Welcome to your Customer Dashboard.</p>
+    </div>
+
+
+    <div class="container mt-4">
+        <div class="row">
+            <div id="activeJobOrders" class="col-md-12 mb-3">
                 <div class="card shadow rounded-3 border-4">
                     <div class="card-header bg-info text-white fw-bold d-flex justify-content-between align-items-center">
                         <span><i class="bi bi-clipboard-check"></i> Active Job Orders</span>
-                        <span class="badge bg-dark">Total: 1</span>
+                        <span class="badge bg-dark">Total: </span>
                     </div>
                     <div class="card-body">
                         <table class="table table-hover">
@@ -47,17 +82,17 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td><i class="bi bi-tools"></i> General Contracting</td>
-                                    <td><i class="bi bi-person-circle"></i> John Smith</td>
-                                    <td><span class="badge bg-warning text-dark">In Progress</span></td>
-                                    <td><i class="bi bi-calendar-event"></i> March 15, 2025</td>
+                                    <td><i class="bi bi-tools"></i> </td>
+                                    <td><i class="bi bi-person-circle"></i> </td>
+                                    <td><span class="badge bg-warning text-dark"></span></td>
+                                    <td><i class="bi bi-calendar-event"></i> </td>
                                     <td>
                                         <button class="btn btn-outline-primary btn-sm" onclick="showJobDetails(
-                                'INV-2025001', 'General Contracting', 'John Smith', 'In Progress',
-                                'March 15, 2025', 'New York, NY', 'John Doe',
-                                'Renovation of a 2-bedroom house.', 'Cement, Wood, Paint',
-                                500, 1500
-                            )">
+                                            '', '', '', '',
+                                            '', '', '',
+                                            '', ', , ',
+                                            5, 
+                                        )">
                                             <i class="bi bi-eye"></i> View
                                         </button>
                                     </td>
@@ -96,294 +131,293 @@
                 </div>
             </div>
 
-
-        <!-- Order History -->
-        <div class="col-md-12 mb-3">
-            <div class="card shadow rounded-3 border-4">
-                <div class="card-header bg-secondary text-white fw-bold">Order History</div>
-                <div class="card-body">
-                    <table class="table table-hover">
-                        <thead class="table-light">
-                            <tr>
-                                <th>Date Completed</th>
-                                <th>Total Cost</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Feb 10, 2025</td>
-                                <td>$1,200</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- Notifications 
-        <div class="col-md-12 mb-3">
-            <div class="card shadow rounded-3 border-0">
-                <div class="card-header bg-info text-white fw-bold">Notifications</div>
-                <div class="card-body">
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item">Status Update: Job Order #123 is in progress</li>
-                        <li class="list-group-item">Reminder: Payment due on March 20</li>
-                    </ul>
-                </div>
-            </div>
-        </div> -->
-
-        <!-- Add New Project -->
-        <div class="col-md-12 mb-3">
-            <div class="card shadow rounded-3 border-4">
-                <div class="card-header bg-success text-white fw-bold">New Project</div>
-                <div class="card-body text-center">
-                    <a href="#" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#addProjectModal">
-                        <i class="bi bi-plus-lg"></i> Add New Project
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <!-- Modal -->
-        <div class="modal fade" id="addProjectModal" tabindex="-1" aria-labelledby="addProjectModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="addProjectModalLabel">Add New Project</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="newProjectForm">
-                            <div class="mb-3">
-                                <label for="projectName" class="form-label">Project Name</label>
-                                <input type="text" class="form-control" id="projectName" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="jobDescription" class="form-label">Job Description</label>
-                                <textarea class="form-control" id="jobDescription" required></textarea>
-                            </div>
-                            <div class="mb-3">
-                                <label for="address" class="form-label">Address</label>
-                                <input type="text" class="form-control" id="address" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="deadline" class="form-label">Deadline</label>
-                                <input type="date" class="form-control" id="deadline" required>
-                            </div>
-                            <button type="submit" class="btn btn-success float-end" data-bs-toggle="tooltip" title="Save Project">
-                                <i class="bi bi-save"></i>
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Billing & Payments -->
-        <div class="col-md-12 mb-3">
-            <div class="card shadow rounded-3 border-4">
-                <div class="card-header bg-dark text-white fw-bold">Billing & Payments</div>
-                <div class="card-body text-center">
-                    <button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#invoiceModal">
-                        <i class="bi bi-receipt"></i> View Invoices
-                    </button>
-                    <a href="#" class="btn btn-outline-secondary">
-                        <i class="bi bi-clock-history"></i> Payment History
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <!-- Invoice Modal -->
-        <div class="modal fade" id="invoiceModal" tabindex="-1" aria-labelledby="invoiceModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header bg-success text-white">
-                        <h5 class="modal-title" id="invoiceModalLabel">Invoice</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <!-- Company Details -->
-                        <div class="row">
-                            <div class="col-md-6">
-                                <h5 class="fw-bold">Trojan Builders</h5>
-                                <p>1234 Construction Ave, City, Country</p>
-                                <p>Email: support@trojanbuilders.com</p>
-                            </div>
-                            <div class="col-md-6 text-end">
-                                <h6 class="fw-bold">Invoice #12345</h6>
-                                <p>Date: March 10, 2025</p>
-                            </div>
-                        </div>
-                        <hr>
-
-                        <!-- Client Details -->
-                        <div class="row">
-                            <div class="col-md-6">
-                                <h6 class="fw-bold">Bill To:</h6>
-                                <p>John Doe</p>
-                                <p>789 Client St, City, Country</p>
-                                <p>Email: johndoe@email.com</p>
-                            </div>
-                            <div class="col-md-6 text-end">
-                                <h6 class="fw-bold">Project Details:</h6>
-                                <p><strong>Work Order #56789</strong></p>
-                                <p>Project: Residential Renovation</p>
-                                <p>Assigned Worker: Mark Smith</p>
-                            </div>
-                        </div>
-                        <hr>
-
-                        <!-- Billing Table -->
-                        <table class="table table-bordered text-center">
-                            <thead class="bg-light">
+            <!-- Order History -->
+            <div class="col-md-12 mb-3">
+                <div class="card shadow rounded-3 border-4">
+                    <div class="card-header bg-secondary text-white fw-bold">Order History</div>
+                    <div class="card-body">
+                        <table class="table table-hover">
+                            <thead class="table-light">
                                 <tr>
-                                    <th>Description</th>
-                                    <th>Qty</th>
-                                    <th>Unit Price</th>
-                                    <th>Total</th>
+                                    <th>Date Completed</th>
+                                    <th>Total Cost</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>Electrical Wiring</td>
-                                    <td>10</td>
-                                    <td>$50.00</td>
-                                    <td>$500.00</td>
-                                </tr>
-                                <tr>
-                                    <td>Labor Costs</td>
-                                    <td>1</td>
-                                    <td>$200.00</td>
-                                    <td>$200.00</td>
+                                    <td></td>
+                                    <td></td>
                                 </tr>
                             </tbody>
                         </table>
+                    </div>
+                </div>
+            </div>
 
-                        <!-- Total Calculation -->
-                        <div class="row">
-                            <div class="col-md-6"></div>
-                            <div class="col-md-6 text-end">
-                                <h5 class="fw-bold">Total: $700.00</h5>
-                                <p class="text-danger">Due Date: March 20, 2025</p>
-                            </div>
+            <!-- Add New Project -->
+            <div class="col-md-12 mb-3">
+                <div class="card shadow rounded-3 border-4">
+                    <div class="card-header bg-success text-white fw-bold">New Project</div>
+                    <div class="card-body text-center">
+                        <a href="#" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#addProjectModal">
+                            <i class="bi bi-plus-lg"></i> Add New Project
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal -->
+            <div class="modal fade" id="addProjectModal" tabindex="-1" aria-labelledby="addProjectModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="addProjectModalLabel">Add New Project</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-
-                        <hr>
-
-                        <div class="text-end">
-                            <button class="btn btn-primary" onclick="processPayment()">
-                                <i class="bi bi-credit-card"></i> Pay Now
-                            </button>
-                            <button class="btn btn-secondary" onclick="printInvoice()">
-                                <i class="bi bi-printer"></i> Print Invoice
-                            </button>
+                        <div class="modal-body">
+                            <form id="newProjectForm">
+                                <div class="mb-3">
+                                    <label for="projectName" class="form-label">Project Name</label>
+                                    <input type="text" class="form-control" id="projectName" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="jobDescription" class="form-label">Job Description</label>
+                                    <textarea class="form-control" id="jobDescription" required></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="address" class="form-label">Address</label>
+                                    <input type="text" class="form-control" id="address" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="deadline" class="form-label">Deadline</label>
+                                    <input type="date" class="form-control" id="deadline" required>
+                                </div>
+                                <button type="submit" class="btn btn-success float-end" data-bs-toggle="tooltip" title="Save Project">
+                                    <i class="bi bi-save"></i>
+                                </button>
+                            </form>
                         </div>
-                        <!-- Payment Confirmation Modal -->
-                        <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered">
-                                <div class="modal-content">
-                                    <div class="modal-header bg-success text-white">
-                                        <h5 class="modal-title" id="paymentModalLabel">Payment Processing</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body text-center">
-                                        <p class="fw-bold">Processing your payment, please wait...</p>
-                                        <div class="spinner-border text-success" role="status">
-                                            <span class="visually-hidden">Processing...</span>
-                                        </div>
+                    </div>
+                </div>
+            </div>
+       
+    <!-- Billing & Payments -->
+    <div class="col-md-12 mb-3">
+        <div class="card shadow rounded-3 border-4">
+            <div class="card-header bg-dark text-white fw-bold">Billing & Payments</div>
+            <div class="card-body text-center">
+                <button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#invoiceModal">
+                    <i class="bi bi-receipt"></i> View Invoices
+                </button>
+                <a href="#" class="btn btn-outline-secondary">
+                    <i class="bi bi-clock-history"></i> Payment History
+                </a>
+            </div>
+         </div>
+        </div>
+     </div>
+ </div>
+
+    <!-- Invoice Modal -->
+    <div class="modal fade" id="invoiceModal" tabindex="-1" aria-labelledby="invoiceModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="invoiceModalLabel">Invoice</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Company Details -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5 class="fw-bold">Trojan Builders</h5>
+                            <p>1234 Construction Ave, City, Country</p>
+                            <p>Email: support@trojanbuilders.com</p>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <h6 class="fw-bold">Invoice #12345</h6>
+                            <p>Date: March 10, 2025</p>
+                        </div>
+                    </div>
+                    <hr>
+
+                    <!-- Client Details -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="fw-bold">Bill To:</h6>
+                            <p>John Doe</p>
+                            <p>789 Client St, City, Country</p>
+                            <p>Email: johndoe@email.com</p>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <h6 class="fw-bold">Project Details:</h6>
+                            <p><strong>Work Order #56789</strong></p>
+                            <p>Project: Residential Renovation</p>
+                            <p>Assigned Worker: Mark Smith</p>
+                        </div>
+                    </div>
+                    <hr>
+
+                    <!-- Billing Table -->
+                    <table class="table table-bordered text-center">
+                        <thead class="bg-light">
+                            <tr>
+                                <th>Description</th>
+                                <th>Qty</th>
+                                <th>Unit Price</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Electrical Wiring</td>
+                                <td>10</td>
+                                <td>$50.00</td>
+                                <td>$500.00</td>
+                            </tr>
+                            <tr>
+                                <td>Labor Costs</td>
+                                <td>1</td>
+                                <td>$200.00</td>
+                                <td>$200.00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Total Calculation -->
+                    <div class="row">
+                        <div class="col-md-6"></div>
+                        <div class="col-md-6 text-end">
+                            <h5 class="fw-bold">Total: $700.00</h5>
+                            <p class="text-danger">Due Date: March 20, 2025</p>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div class="text-end">
+                        <button class="btn btn-primary" onclick="processPayment()">
+                            <i class="bi bi-credit-card"></i> Pay Now
+                        </button>
+                        <button class="btn btn-secondary" onclick="printInvoice()">
+                            <i class="bi bi-printer"></i> Print Invoice
+                        </button>
+                    </div>
+                    <!-- Payment Confirmation Modal -->
+                    <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header bg-success text-white">
+                                    <h5 class="modal-title" id="paymentModalLabel">Payment Processing</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body text-center">
+                                    <p class="fw-bold">Processing your payment, please wait...</p>
+                                    <div class="spinner-border text-success" role="status">
+                                        <span class="visually-hidden">Processing...</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+    <!-- Bootstrap JavaScript (Ensure Bootstrap JS is included) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.getElementById("newProjectForm").addEventListener("submit", function (event) {
+                event.preventDefault(); // Prevent actual form submission
 
-        <!-- Bootstrap JavaScript (Ensure Bootstrap JS is included) -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        document.getElementById("newProjectForm").addEventListener("submit", function (event) {
-            event.preventDefault(); // Prevent actual form submission
+                // Get input values
+                let projectName = document.getElementById("projectName").value.trim();
+                let jobDescription = document.getElementById("jobDescription").value.trim();
+                let address = document.getElementById("address").value.trim();
+                let deadline = document.getElementById("deadline").value.trim();
 
-            // Get input values
-            let projectName = document.getElementById("projectName").value.trim();
-            let jobDescription = document.getElementById("jobDescription").value.trim();
-            let address = document.getElementById("address").value.trim();
-            let deadline = document.getElementById("deadline").value.trim();
+                // Validate fields
+                if (!projectName || !jobDescription || !address || !deadline) {
+                    alert("Please fill all fields!");
+                    return;
+                }
 
-            // Validate fields
-            if (!projectName || !jobDescription || !address || !deadline) {
-                alert("Please fill all fields!");
-                return;
-            }
+                // Display success message (Replace with actual submission logic)
+                alert("New Project Added:\n" +
+                    "Project: " + projectName + "\n" +
+                    "Job Description: " + jobDescription + "\n" +
+                    "Address: " + address + "\n" +
+                    "Deadline: " + deadline);
 
-            // Display success message (Replace with actual submission logic)
-            alert("New Project Added:\n" +
-                "Project: " + projectName + "\n" +
-                "Job Description: " + jobDescription + "\n" +
-                "Address: " + address + "\n" +
-                "Deadline: " + deadline);
+                // Close modal properly
+                let modalElement = document.getElementById("addProjectModal");
+                let modalInstance = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
+                modalInstance.hide();
 
-            // Close modal properly
-            let modalElement = document.getElementById("addProjectModal");
-            let modalInstance = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
-            modalInstance.hide();
-
-            // Clear form fields
-            document.getElementById("newProjectForm").reset();
+                // Clear form fields
+                document.getElementById("newProjectForm").reset();
+            });
         });
-    });
 
-    function logout() {
-        window.location.href = '/Identity/Account/Logout';
-    }
-
-    function processPayment() {
-        alert("Redirecting to payment gateway...");
-        // Replace with actual payment logic
-    }
-
-    function printInvoice() {
-        window.print();
-    }
-             function showJobDetails(jobId, jobType, contractor, status, completionDate, location, customerName, jobDescription, jobMaterials, laborCost, totalCost) {
-            document.getElementById("jobId").innerText = jobId;
-            document.getElementById("customerName").innerText = customerName;
-            document.getElementById("jobType").innerText = jobType;
-            document.getElementById("jobContractor").innerText = contractor;
-            document.getElementById("jobStatus").innerText = status;
-            document.getElementById("jobCompletion").innerText = completionDate;
-            document.getElementById("jobLocation").innerText = location;
-            document.getElementById("jobDescription").innerText = jobDescription;
-            document.getElementById("jobMaterials").innerText = jobMaterials;
-            document.getElementById("jobLaborCost").innerText = laborCost;
-            document.getElementById("jobTotalCost").innerText = totalCost;
-
-            // Update status badge color
-            let statusBadge = document.getElementById("jobStatus");
-            statusBadge.className = "badge"; // Reset previous class
-            if (status === "In Progress") statusBadge.classList.add("bg-warning", "text-dark");
-            else if (status === "Completed") statusBadge.classList.add("bg-success");
-            else statusBadge.classList.add("bg-secondary");
-
-            var myModal = new bootstrap.Modal(document.getElementById("jobOrderModal"));
-            myModal.show();
+        function logout() {
+            window.location.href = '/Identity/Account/Logout';
         }
-    // Initialize Bootstrap Tooltips
-    document.addEventListener("DOMContentLoaded", function () {
-        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl);
+
+        function processPayment() {
+            alert("Redirecting to payment gateway...");
+            // Replace with actual payment logic
+        }
+
+        function printInvoice() {
+            window.print();
+        }
+                 function showJobDetails(jobId, jobType, contractor, status, completionDate, location, customerName, jobDescription, jobMaterials, laborCost, totalCost) {
+                document.getElementById("jobId").innerText = jobId;
+                document.getElementById("customerName").innerText = customerName;
+                document.getElementById("jobType").innerText = jobType;
+                document.getElementById("jobContractor").innerText = contractor;
+                document.getElementById("jobStatus").innerText = status;
+                document.getElementById("jobCompletion").innerText = completionDate;
+                document.getElementById("jobLocation").innerText = location;
+                document.getElementById("jobDescription").innerText = jobDescription;
+                document.getElementById("jobMaterials").innerText = jobMaterials;
+                document.getElementById("jobLaborCost").innerText = laborCost;
+                document.getElementById("jobTotalCost").innerText = totalCost;
+
+                // Update status badge color
+                let statusBadge = document.getElementById("jobStatus");
+                statusBadge.className = "badge"; // Reset previous class
+                if (status === "In Progress") statusBadge.classList.add("bg-warning", "text-dark");
+                else if (status === "Completed") statusBadge.classList.add("bg-success");
+                else statusBadge.classList.add("bg-secondary");
+
+                var myModal = new bootstrap.Modal(document.getElementById("jobOrderModal"));
+                myModal.show();
+            }
+        // Initialize Bootstrap Tooltips
+        document.addEventListener("DOMContentLoaded", function () {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
         });
-    });
-</script>
+    </script>
+    <script>
+        document.getElementById("orderLink").addEventListener("click", function (event) {
+            event.preventDefault(); // Prevent default jump behavior
+
+            let target = document.getElementById("activeJobOrders");
+            let navbarHeight = document.querySelector(".navbar").offsetHeight; // Get navbar height
+
+            // Smoothly scroll to the section, adjusting for the navbar height
+            window.scrollTo({
+                top: target.offsetTop - navbarHeight - 20, // Offset 20px for extra spacing
+                behavior: "smooth"
+            });
+        });
+    </script>
+
 
 </body>
 </html>

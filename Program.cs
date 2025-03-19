@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using System;
 using System.Threading.Tasks;
+using IT15_Trojan_B.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,6 +46,8 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 // 🔹 Register Email Service (Prevent Email Errors)
 builder.Services.AddSingleton<IEmailSender, EmailSender>();
+builder.Services.AddSignalR();
+
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages()
@@ -86,6 +89,7 @@ else
     app.UseHsts();
 }
 
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
@@ -98,9 +102,9 @@ app.UseAuthorization();
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllerRoute(
-        name: "adminDashboard",
-        pattern: "Home/AdminDashboard",
-        defaults: new { controller = "Home", action = "AdminDashboard" });
+        name: "admin",
+        pattern: "Admin/{action=Dashboard}",
+        defaults: new { controller = "Admin" });
 
     endpoints.MapControllerRoute(
         name: "employeeDashboard",
@@ -115,6 +119,30 @@ app.UseEndpoints(endpoints =>
     endpoints.MapControllerRoute(
         name: "default",
         pattern: "{controller=Home}/{action=Index}/{id?}");
+
+    endpoints.MapControllerRoute(
+        name: "workorder",
+        pattern: "{controller=Admin}/{action=WorkOrder}/{id?}");
+
+    endpoints.MapControllerRoute(
+        name: "materials",
+        pattern: "{controller=Materials}/{action=Index}/{id?}");
+    endpoints.MapControllerRoute(
+       name: "tools",
+       pattern: "{controller=Admin}/{action=Tools}/{id?}");
+   // endpoints.MapControllerRoute(
+     //  name: "safety",
+      // pattern: "{controller=Admin}/{action=Safety}/{id?}");
+
+    endpoints.MapControllerRoute(
+       name: "default",
+       pattern: "{controller=SafetyEquipment}/{action=Index}/{id?}");
+
+
+    endpoints.MapHub<MaterialsHub>("/materialsHub");
+
+
+
 
     endpoints.MapRazorPages(); // ✅ Ensure Razor Pages are mapped
 });

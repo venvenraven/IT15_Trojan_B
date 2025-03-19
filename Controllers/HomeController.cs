@@ -4,7 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Linq;
 using IT15_Trojan_B.Data;
-using Microsoft.AspNetCore.Authorization; // Ensure this is your DbContext namespace
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity; // For IdentityUser
+using System.Threading.Tasks;
 
 namespace IT15_Trojan_B.Controllers
 {
@@ -12,15 +14,19 @@ namespace IT15_Trojan_B.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context)
+        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context, UserManager<IdentityUser> userManager)
         {
             _logger = logger;
             _context = context;
+            _userManager = userManager;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            var user = await _userManager.GetUserAsync(User);
+            ViewBag.FullName = user?.GetType().GetProperty("FullName")?.GetValue(user, null) as string;
             return View();
         }
 
@@ -28,6 +34,7 @@ namespace IT15_Trojan_B.Controllers
         {
             return View();
         }
+
         [Authorize(Roles = "Employee")]
         public IActionResult EmployeeDashboard()
         {
@@ -37,19 +44,18 @@ namespace IT15_Trojan_B.Controllers
 
             ViewBag.ClassificationData = new int[]
             {
-            _context.Employees.Count(e => e.Classification == "General Contractor"),
-            _context.Employees.Count(e => e.Classification == "Subcontractor"),
-            _context.Employees.Count(e => e.Classification == "Site Supervisor")
+                _context.Employees.Count(e => e.Classification == "General Contractor"),
+                _context.Employees.Count(e => e.Classification == "Subcontractor"),
+                _context.Employees.Count(e => e.Classification == "Site Supervisor")
             };
 
             ViewBag.SpecialtyData = new int[]
             {
-             _context.Employees.Count(e => e.Specialty == "Electrical"),
-             _context.Employees.Count(e => e.Specialty == "Plumbing"),
-             _context.Employees.Count(e => e.Specialty == "Carpentry"),
-             _context.Employees.Count(e => e.Specialty == "Finish")
+                _context.Employees.Count(e => e.Specialty == "Electrical"),
+                _context.Employees.Count(e => e.Specialty == "Plumbing"),
+                _context.Employees.Count(e => e.Specialty == "Carpentry"),
+                _context.Employees.Count(e => e.Specialty == "Finish")
             };
-
 
             return View();
         }
@@ -63,7 +69,6 @@ namespace IT15_Trojan_B.Controllers
                 CompletedOrders = _context.Orders.Count(o => o.Status == "Completed"),
                 UpcomingAppointments = _context.Appointments.Count(a => a.Date >= DateTime.Now),
                 TotalPayments = _context.Payments.Sum(p => p.Amount)
-               
             };
 
             return View(model);
@@ -75,7 +80,15 @@ namespace IT15_Trojan_B.Controllers
             return View();
         }
 
+        public IActionResult CustomerProfile()
+        {
+            return View();
+        }
 
+        public IActionResult EmployeeProfile()
+        {
+            return View();
+        }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

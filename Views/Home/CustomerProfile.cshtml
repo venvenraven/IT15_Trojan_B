@@ -1,0 +1,73 @@
+﻿@{
+    ViewData["Title"] = "Customer Profile";
+}
+
+<!-- Navbar -->
+<header>
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top py-2 ">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <img src="~/images/tb.png" alt="Logo" class="navbar-logo me-2">
+                <span class="navbar-text fw-bold">Trojan Builders</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link custom-nav-link" asp-controller="Home" asp-action="CustomerDashBoard">
+                            <i class="fas fa-tachometer-alt"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <span class="nav-link custom-nav-link" style="pointer-events: none; cursor: default;">
+                            <i class="fas fa-id-badge"></i> @User.Identity?.Name <!-- Display the user's name -->
+                        </span>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<!-- Main content -->
+<div class="container" style="margin-top: 100px;">
+    <h1>Customer Profile</h1>
+    <p>Welcome to your profile page!</p>
+
+    <!-- Manage Navigation (similar to Identity Manage page) -->
+    <div class="row">
+        <div class="col-md-3">
+            <div class="list-group">
+                <a href="#" class="list-group-item list-group-item-action active">Profile</a>
+                <a href="#" class="list-group-item list-group-item-action">Change Password</a>
+                <a href="#" class="list-group-item list-group-item-action">Two-Factor Authentication</a>
+                <a href="#" class="list-group-item list-group-item-action">Personal Data</a>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Profile Information</h4>
+                </div>
+                <div class="card-body">
+                    <p>Here you can manage your profile information.</p>
+                    <form>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" class="form-control" id="email" value="customer@example.com" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Phone Number</label>
+                            <input type="text" class="form-control" id="phone" value="+1 234 567 890">
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-3">Save Changes</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

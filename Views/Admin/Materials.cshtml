@@ -1,0 +1,525 @@
+﻿@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Materials Inventory";
+}
+
+<!DOCTYPE html>
+<style>
+
+    .table-responsive {
+        max-height: calc(95vh - 150px);
+        Adjust based on sidebar height */ overflow-y: auto; /* Enables vertical scrolling */
+    }
+</style>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Materials Inventory</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="~/css/styles.css" asp-append-version="true" />
+
+</head>
+
+<body>
+
+    <div class="container mt-5 px-4">
+        <div class="row my-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <button class="btn btn-sm btn-secondary" data-bs-toggle="modal" data-bs-target="#addMaterialModal">
+                    <i class="fas fa-plus-circle"></i> Add Material
+                </button>
+                <input type="text" id="searchInput" class="form-control form-control-sm w-25" placeholder="Search...">
+            </div>
+        </div>
+
+        <div class="col table-responsive">
+            <table class="table table-hover rounded shadow-sm" id="materialsTable">
+                <thead>
+                    <tr>
+                        <th scope="col" class="text-center">Name</th>
+                        <th scope="col" class="text-center">Quantity</th>
+                        <th scope="col" class="text-center">Brand</th>
+                        <th scope="col" class="text-center">Supplier</th>
+                        <th scope="col" class="text-center">Price</th>
+                        <th scope="col" class="text-center">Status</th>
+                        <th scope="col" class="text-center">Storage</th>
+                        <th scope="col" class="text-center">Date Acquired</th>
+                        <th scope="col" class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="materialTableBody">
+                    @foreach (var material in Model)
+                    {
+                        <tr data-id="@material.Id">
+                            <td class="text-center">@material.Name</td>
+                            <td class="text-center">@material.Quantity @material.Unit</td>
+                            <td class="text-center">@material.Brand</td>
+                            <td class="text-center">@material.Supplier</td>
+                            <td class="text-center">₱@material.Price.ToString("N2")</td>
+                            <td class="text-center">@material.Status</td>
+                            <td class="text-center">@material.StorageLocation</td>
+                            <td class="text-center">@material.DateAcquired?.ToString("dd MMMM yyyy")</td>
+
+                            <td class="text-center">
+                                <div class="d-flex justify-content-center gap-2">
+                                    <button class="btn btn-sm btn-info edit-btn" data-id="@material.Id" data-bs-toggle="modal" data-bs-target="#editMaterialModal">
+                                        <i class="fas fa-edit text-white" ></i>
+                                    </button>
+                                    <button class="btn btn-secondary btn-sm" onclick="archiveMaterial(${item.id})">
+                                    <i class="fas fa-archive text-white"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+
+    <!-- ADD MATERIALS MODAL -->
+
+    <div class="modal fade" id="addMaterialModal" tabindex="-1" aria-labelledby="addMaterialLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addMaterialLabel" style="color: black; font-weight: bold;">Add Material</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" id="materialName" class="form-control mb-2" placeholder="Material Name">
+                    <div class="input-group mb-2">
+                        <input type="number" id="materialQuantity" class="form-control" placeholder="Quantity">
+                        <select id="materialUnit" class="form-select">
+                            <option value="pcs">pcs</option>
+                            <option value="kg">kg</option>
+                            <option value="liters">liters</option>
+                            <option value="meters">meters</option>
+                            <option value="sq. meters">sq. meters</option>
+                            <option value="cu. meters">cu. meters</option>
+                        </select>
+                    </div>
+                    <input type="text" id="materialBrand" class="form-control mb-2" placeholder="Brand">
+                    <input type="text" id="materialSupplier" class="form-control mb-2" placeholder="Supplier">
+                    <input type="number" id="materialPrice" class="form-control mb-2" placeholder="Price" min="0">
+                    <select id="materialStatus" class="form-select mb-2">
+                        <option value="" disabled selected>Select Status</option>
+                        <option value="Stock">Stock</option>
+                        <option value="Delivery">Delivery</option>
+                        <option value="Project">Project</option>
+                    </select>
+                    <select id="materialStorage" class="form-select mb-2">
+                        <option value="" disabled selected>Select Storage</option>
+                        <option value="Warehouse 1">Warehouse 1</option>
+                        <option value="Warehouse 2">Warehouse 2</option>
+                        <option value="On Site">On Site</option>
+                    </select>
+                    <input type="date" id="materialDateAcquired" class="form-control mb-2">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="saveMaterial">Save</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- EDIT MATERIALS MODAL -->
+    <form asp-action="EditMaterial" asp-controller="Materials" method="post">
+        <div class="modal fade" id="editMaterialModal" tabindex="-1" aria-labelledby="editMaterialLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+            <div class="modal-dialog modal-md">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title w-100 text-center" id="editMaterialLabel" style="color: black; font-weight: bold;">Edit Materials</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="editRowIndex">
+
+                        <label for="editMaterialName" class="form-label text-start">Material Name:</label>
+                        <input type="text" id="editMaterialName" class="form-control mb-2" placeholder="Material Name:">
+
+                        <label for="editMaterialQuantity" class="form-label text-start">Quantity:</label>
+                        <div class="input-group mb-2">
+                            <input type="number" id="editMaterialQuantity" class="form-control">
+                            <select id="editMaterialUnit" class="form-select">
+                                <option value="pcs">pcs</option>
+                                <option value="kg">kg</option>
+                                <option value="liters">liters</option>
+                                <option value="meters">meters</option>
+                                <option value="sq. meters">sq. meters</option>
+                                <option value="cu. meters">cu. meters</option>
+                            </select>
+                        </div>
+
+                        <label for="editMaterialBrand" class="form-label text-start">Brand:</label>
+                        <input type="text" id="editMaterialBrand" class="form-control mb-2" placeholder="Brand">
+
+                        <label for="editMaterialSupplier" class="form-label text-start">Supplier:</label>
+                        <input type="text" id="editMaterialSupplier" class="form-control mb-2" placeholder="Supplier">
+
+                        <label for="editMaterialPrice" class="form-label text-start">Price:</label>
+                        <input type="number" id="editMaterialPrice" class="form-control mb-2" placeholder="Price">
+
+                        <label for="editMaterialStatus" class="form-label text-start">Status:</label>
+                        <select id="editMaterialStatus" class="form-select mb-2">
+                            <option value="" disabled selected>Select Status</option>
+                            <option value="Stock">Stock</option>
+                            <option value="Delivery">Delivery</option>
+                            <option value="Project">Project</option>
+                        </select>
+
+                        <label for="editMaterialStorage" class="form-label text-start">Storage:</label>
+                        <select id="editMaterialStorage" class="form-select mb-2">
+                            <option value="" disabled selected>Select Storage</option>
+                            <option value="Warehouse 1">Warehouse 1</option>
+                            <option value="Warehouse 2">Warehouse 2</option>
+                            <option value="Outdoor Storage">Outdoor Storage</option>
+                        </select>
+
+                        <label for="editMaterialDateAcquired" class="form-label text-start">Date Acquired:</label>
+                        <input type="date" id="editMaterialDateAcquired" class="form-control mb-2">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="updateMaterial">Update</button>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </form>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+
+    <script>
+                    // REAL TIME TABLE SEARCH JS
+                    document.getElementById("searchInput").addEventListener("keyup", function() {
+                        let filter = this.value.toLowerCase();
+                        let rows = document.querySelectorAll("#materialTableBody tr");
+
+                        rows.forEach(row => {
+                            let text = row.innerText.toLowerCase();
+                            row.style.display = text.includes(filter) ? "" : "none";
+                        });
+                    });
+                    // ADD MATERIAL
+                    document.getElementById("saveMaterial").addEventListener("click", function () {
+                let isValid = true;
+
+                // Get all input fields
+                let inputs = [
+                    document.getElementById("materialName"),
+                    document.getElementById("materialQuantity"),
+                    document.getElementById("materialBrand"),
+                    document.getElementById("materialSupplier"),
+                    document.getElementById("materialPrice"),
+                    document.getElementById("materialStatus"),
+                    document.getElementById("materialStorage")
+
+
+                ];
+
+                // Validate each field
+                inputs.forEach(input => {
+                    if (!input.value || input.value.trim() === "") {
+                        isValid = false;
+                        input.classList.add("is-invalid"); // Bootstrap invalid style
+                    } else {
+                        input.classList.remove("is-invalid");
+                    }
+                });
+
+                // Validate the select inputs separately
+                let selects = [
+                    document.getElementById("materialUnit"),
+                    document.getElementById("materialStatus"),
+                    document.getElementById("materialStorage")
+                ];
+
+                selects.forEach(select => {
+                    if (!select.value || select.value.trim() === "") {
+                        isValid = false;
+                        select.classList.add("is-invalid");
+                    } else {
+                        select.classList.remove("is-invalid");
+                    }
+                });
+
+                 if (!isValid) {
+                 console.log("Form is invalid! Please fill out all required fields.");
+                 return; // Prevent further execution if validation fails
+                }
+
+                console.log("Form is valid! Proceeding...");
+
+                // Submit data via AJAX or process further
+
+
+                    // Convert to Philippine Time (PHT)
+                let dateField = document.getElementById("materialDateAcquired");
+                let dateInput = dateField?.value?.trim() || ""; // Ensure we get a trimmed value
+                let dateAcquired = dateInput || new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Manila" });
+
+
+
+                    let materialData = {
+                        Name: document.getElementById("materialName").value.trim(),
+                        Quantity: document.getElementById("materialQuantity").value.trim(),
+                        Unit: document.getElementById("materialUnit").value,
+                        Brand: document.getElementById("materialBrand").value.trim(),
+                        Supplier: document.getElementById("materialSupplier").value.trim(),
+                        Price: document.getElementById("materialPrice").value.trim(),
+                        Status: document.getElementById("materialStatus").value.trim(),
+                        StorageLocation: document.getElementById("materialStorage").value.trim(),
+                        DateAcquired: new Date(dateAcquired).toISOString().split("T")[0] // Only keeps YYYY-MM-DD
+                    };
+
+                    console.log("Sending data:", materialData);
+
+                    fetch("/Materials/SaveMaterial", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(materialData)
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log("Response received:", data);
+
+                        if (data.success) {
+                            Swal.fire({
+                                title: "Success!",
+                                text: "Material added successfully.",
+                                icon: "success",
+                                confirmButtonText: "OK"
+                            }).then(() => {
+                                document.getElementById("addMaterialModal").querySelector(".btn-close").click();
+                                document.getElementById("materialName").value = "";
+                                document.getElementById("materialQuantity").value = "";
+                                document.getElementById("materialUnit").value = "pcs";
+                                document.getElementById("materialBrand").value = "";
+                                document.getElementById("materialSupplier").value = "";
+                                document.getElementById("materialPrice").value = "";
+                                document.getElementById("materialStatus").value = "";
+                                document.getElementById("materialStorage").value = "";
+                                document.getElementById("materialDateAcquired").value = "";
+
+                                // Notify SignalR to refresh table
+                                connection.invoke("NotifyUpdate").catch(err => console.error("SignalR error:", err));
+                            });
+                        } else {
+                            Swal.fire("Error!", data.message || "Failed to add material.", "error");
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error:", error);
+                        Swal.fire("Error!", "Something went wrong.", "error");
+                    });
+                });
+
+             // ✅ Clear modal fields when the modal is closed (X button or Close button)
+            document.getElementById("addMaterialModal").addEventListener("hidden.bs.modal", function () {
+            document.getElementById("materialName").value = "";
+            document.getElementById("materialQuantity").value = "";
+            document.getElementById("materialUnit").value = "pcs";
+            document.getElementById("materialBrand").value = "";
+            document.getElementById("materialSupplier").value = "";
+            document.getElementById("materialPrice").value = "";
+            document.getElementById("materialStatus").value = "";
+            document.getElementById("materialStorage").value = "";
+            document.getElementById("materialDateAcquired").value = "";
+
+            // Remove validation error styles
+            document.querySelectorAll(".is-invalid").forEach(el => el.classList.remove("is-invalid"));
+        });
+
+
+                // ✅ SignalR Setup
+                let connection = new signalR.HubConnectionBuilder()
+                    .withUrl("/MaterialsHub")
+                    .build();
+
+                connection.start()
+                    .then(() => console.log("Connected to SignalR!"))
+                    .catch(err => console.error("Error connecting to SignalR:", err));
+
+                connection.on("RefreshMaterials", function () {
+                    console.log("Received update! Refreshing materials...");
+                    loadMaterials();
+                });
+
+                // ✅ Load Updated Materials
+                function loadMaterials() {
+                    fetch("/Materials/Index")
+                        .then(response => response.text())
+                        .then(data => {
+                            document.getElementById("materialTableBody").innerHTML = new DOMParser().parseFromString(data, "text/html").querySelector("#materialTableBody").innerHTML;
+                        })
+                        .catch(error => console.error("Error loading materials:", error));
+                }
+
+
+
+                    // OPEN EDIT MODAL JS
+                    document.addEventListener("DOMContentLoaded", function () {
+                    let materialTableBody = document.getElementById("materialTableBody");
+                    let editMaterialModalElement = document.getElementById("editMaterialModal");
+
+                    if (!materialTableBody || !editMaterialModalElement) return;
+
+                    let editMaterialModal = new bootstrap.Modal(editMaterialModalElement);
+
+                    // OPEN EDIT MODAL
+                    materialTableBody.addEventListener("click", function (event) {
+                        if (event.target.closest(".edit-btn")) {
+                            let row = event.target.closest("tr");
+                            document.getElementById("editRowIndex").value = row.rowIndex - 1;
+                            document.getElementById("editMaterialName").value = row.children[0].innerText;
+                            let quantityParts = row.children[1].innerText.split(" ");
+                            document.getElementById("editMaterialQuantity").value = quantityParts[0];
+                            document.getElementById("editMaterialUnit").value = quantityParts[1] || "pcs"; // Default unit
+                            document.getElementById("editMaterialBrand").value = row.children[2].innerText;
+                            document.getElementById("editMaterialSupplier").value = row.children[3].innerText;
+                            document.getElementById("editMaterialPrice").value = parseFloat(row.children[4].innerText.replace(/[₱,]/g, '')) || 0;
+                            document.getElementById("editMaterialStatus").value = row.children[5].innerText;
+                            document.getElementById("editMaterialStorage").value = row.children[6].innerText;
+                            let dateAcquiredText = row.children[7].innerText.trim();
+                            let dateAcquiredFormatted = new Date(dateAcquiredText).toISOString().split("T")[0];
+                            document.getElementById("editMaterialDateAcquired").value = dateAcquiredFormatted;
+
+                            editMaterialModal.show();
+                        }
+                    });
+
+                    // UPDATE MATERIAL
+                                            document.getElementById("updateMaterial").addEventListener("click", function () {
+                    let index = document.getElementById("editRowIndex")?.value;
+                    let tableRows = document.querySelectorAll("#materialTableBody tr");
+                    let row = tableRows[index];
+
+                    if (!row) {
+                        Swal.fire("Error", "Invalid material selection.", "error");
+                        return;
+                    }
+
+                    let materialId = row.dataset.id?.trim(); // Ensure ID exists
+                    if (!materialId) {
+                        Swal.fire("Error", "Material ID missing. Cannot update.", "error");
+                        return;
+                    }
+
+                let dateAcquired = document.getElementById("editMaterialDateAcquired")?.value.trim();
+                let formattedDate = new Date(dateAcquired).toISOString().split("T")[0]; // Force UTC
+
+                    let updatedMaterial = {
+                        Id: materialId,
+                        Name: document.getElementById("editMaterialName")?.value.trim(),
+                        Quantity: parseInt(document.getElementById("editMaterialQuantity")?.value.trim()) || 0,
+                        Unit: document.getElementById("editMaterialUnit")?.value.trim(),
+                        Brand: document.getElementById("editMaterialBrand")?.value.trim(),
+                        Supplier: document.getElementById("editMaterialSupplier")?.value.trim(),
+                        Price: parseFloat(document.getElementById("editMaterialPrice")?.value.trim()) || 0,
+                        Status: document.getElementById("editMaterialStatus")?.value.trim(),
+                        StorageLocation: document.getElementById("editMaterialStorage")?.value.trim(),
+                        DateAcquired: document.getElementById("editMaterialDateAcquired")?.value.trim()
+                    };
+
+                    // Validate required fields
+                            if (!updatedMaterial.Name || updatedMaterial.Quantity === null || updatedMaterial.Quantity === undefined || !updatedMaterial.Brand ||
+                        !updatedMaterial.Supplier || !updatedMaterial.Price || !updatedMaterial.Status ||
+                        !updatedMaterial.StorageLocation) {
+                        Swal.fire("Error!", "Please fill in all fields.", "error");
+                        return;
+                    }
+
+                            fetch('/Materials/SaveMaterial', {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(updatedMaterial)
+                })
+                .then(response => response.text())  // Get raw response first
+                .then(text => {
+                    console.log("Raw Response:", text);
+
+                    if (!text) {
+                        throw new Error("Empty response received from server.");
+                    }
+
+                    return JSON.parse(text);  // Parse JSON after checking it's not empty
+                })
+                .then(data => {
+                    console.log("Parsed Data:", data);
+
+                        if (data.success) {
+                            // Update the specific row without reloading the page
+                            row.children[0].innerText = updatedMaterial.Name;
+                            row.children[1].innerText = `${updatedMaterial.Quantity} ${updatedMaterial.Unit}`;
+                            row.children[2].innerText = updatedMaterial.Brand;
+                            row.children[3].innerText = updatedMaterial.Supplier;
+                            row.children[4].innerText = `₱${updatedMaterial.Price.toLocaleString("en-PH", { minimumFractionDigits: 2 })}`;
+                            row.children[5].innerText = updatedMaterial.Status;
+                            row.children[6].innerText = updatedMaterial.StorageLocation;
+                            row.children[7].innerText = updatedMaterial.DateAcquired;
+
+                            Swal.fire({
+                                title: "Updated!",
+                                text: "Material details updated successfully.",
+                                icon: "success",
+                                confirmButtonText: "OK"
+                            }).then(() => {
+                                editMaterialModal.hide();
+                            });
+
+                        } else {
+                            Swal.fire("Error", data.message || "Failed to update material.", "error");
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Fetch error:", error);
+                        Swal.fire("Error!", "Something went wrong while updating the material.", "error");
+                    });
+                });
+
+
+                    // HANDLE MODAL CLOSE EVENT TO REMOVE BLUR
+                    editMaterialModalElement.addEventListener("hidden.bs.modal", function () {
+                        document.body.classList.remove("modal-open"); // Ensure class is removed
+                        document.querySelectorAll(".modal-backdrop").forEach(el => el.remove()); // Remove all backdrops
+                        document.body.style.overflow = ""; // Restore page scrolling
+                    });
+
+                });
+
+
+                    // ARCHIVE MATERIAL
+                            function archiveMaterial(id) {
+            $.post("/Materials/ArchiveMaterial", { id: id })
+                .done(function(response) {
+                    if (response.success) {
+                        Swal.fire("Archived!", "Material has been archived.", "success");
+                        loadMaterials();
+                    } else {
+                        Swal.fire("Error", response.message, "error");
+                    }
+                })
+                .fail(function(xhr) {
+                    console.error("AJAX error:", xhr.responseText);
+                    Swal.fire("Error", "An unexpected error occurred.", "error");
+                });
+        }
+
+
+
+    </script>
+
+
+</body>
+</html>

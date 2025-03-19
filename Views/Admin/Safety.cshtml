@@ -1,0 +1,296 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Safety Equipments Inventory";
+}
+
+@model IEnumerable<SafetyEquipment>
+
+
+<!DOCTYPE html>
+<style>
+    .form-label {
+        color: black !important;
+        font-weight: bold;
+    }
+
+    .modal-title {
+        color: black !important;
+        font-weight: bold;
+    }
+</style>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Safety Equipments</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="~/css/styles.css" asp-append-version="true" />
+</head>
+
+<body class="bg-white text-light">
+    <div class="container mt-5 px-4">
+        <div class="row my-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <button class="btn btn-sm btn-secondary" data-bs-toggle="modal" data-bs-target="#addSafetyModal">
+                    <i class="fas fa-plus-circle"></i> Add Safety Equipment
+                </button>
+                <input type="text" id="searchInput" class="form-control form-control-sm w-25" placeholder="Search...">
+            </div>
+        </div>
+
+        <div class="col table-responsive">
+            <table class="table table-hover rounded shadow-sm" id="safetyTable">
+                <thead>
+                    <tr>
+                        <th class="text-center">Safety Equipment</th>
+                        <th class="text-center">Quantity</th>
+                        <th class="text-center">Brand</th>
+                        <th class="text-center">Supplier</th>
+                        <th class="text-center">Price</th>
+                        <th class="text-center">Condition</th>
+                        <th class="text-center">Date Acquired</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="safetyTableBody">
+                        @foreach (var item in Model)
+                        {
+                        <tr>
+                            <td>@item.Name</td>
+                            <td>@item.Quantity</td>
+                            <td>@item.Brand</td>
+                            <td>@item.Supplier</td>
+                            <td>@item.Price</td>
+                            <td>@item.Condition</td>
+                            <td>@item.DateAcquired.ToString("yyyy-MM-dd")</td>
+                            <td>
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-info">Edit</a>
+                                <form asp-action="Delete" method="post" style="display:inline;">
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                        }
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+
+    <!-- Add Safety Equipment Modal -->
+    <div class="modal fade" id="addSafetyModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Safety Equipments</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" id="safetyName" class="form-control mb-2" placeholder="Safety Equipment Name">
+                    <input type="number" id="safetyQuantity" class="form-control mb-2" placeholder="Quantity">
+                    <input type="text" id="safetyBrand" class="form-control mb-2" placeholder="Brand">
+                    <input type="text" id="safetySupplier" class="form-control mb-2" placeholder="Supplier">
+                    <input type="number" id="safetyPrice" class="form-control mb-2" placeholder="Price">
+                    <select id="safetyCondition" class="form-control mb-2">
+                        <option value="" disabled selected>Select Condition</option>
+                        <option value="New">Brand New</option>
+                        <option value="Used">Used</option>
+                        <option value="Damaged">Damaged</option>
+                    </select>
+                    <input type="date" id="safetyDateAcquired" class="form-control mb-2">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="saveSafety">Save</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- EDIT SAFETY EQUIPMENT MODAL -->
+    <div class="modal fade" id="editSafetyModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Safety Equipment</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-2">
+                        <label for="editSafetyName" class="form-label d-block">Equipment Name:</label>
+                        <input type="text" id="editSafetyName" class="form-control">
+                    </div>
+                    <div class="mb-2">
+                        <label for="editSafetyQuantity" class="form-label d-block">Quantity:</label>
+                        <input type="number" id="editSafetyQuantity" class="form-control">
+                    </div>
+                    <div class="mb-2">
+                        <label for="editSafetyBrand" class="form-label d-block">Brand:</label>
+                        <input type="text" id="editSafetyBrand" class="form-control">
+                    </div>
+                    <div class="mb-2">
+                        <label for="editSafetySupplier" class="form-label d-block">Supplier:</label>
+                        <input type="text" id="editSafetySupplier" class="form-control">
+                    </div>
+                    <div class="mb-2">
+                        <label for="editSafetyPrice" class="form-label d-block">Price:</label>
+                        <input type="number" id="editSafetyPrice" class="form-control">
+                    </div>
+                    <div class="mb-2">
+                        <label for="editSafetyCondition" class="form-label d-block">Condition:</label>
+                        <select id="editSafetyCondition" class="form-control">
+                            <option value="" disabled selected>Select Condition</option>
+                            <option value="New">Brand New</option>
+                            <option value="Used">Used</option>
+                            <option value="Damaged">Damaged</option>
+                        </select>
+                    </div>
+                    <div class="mb-2">
+                        <label for="editSafetyDateAcquired" class="form-label d-block">Date Acquired:</label>
+                        <input type="date" id="editSafetyDateAcquired" class="form-control">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="updateSafety">Update</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+                // Search Functionality
+                document.getElementById("searchInput").addEventListener("keyup", function () {
+                    let filter = this.value.toLowerCase();
+                    let rows = document.querySelectorAll("#safetyTableBody tr");
+                    rows.forEach(row => {
+                        let text = row.innerText.toLowerCase();
+                        row.style.display = text.includes(filter) ? "" : "none";
+                    });
+                });
+
+                // Add Safety Equipment
+                document.getElementById('saveSafety').addEventListener('click', function () {
+                    let name = document.getElementById('safetyName').value;
+                    let quantity = document.getElementById('safetyQuantity').value;
+                    let brand = document.getElementById('safetyBrand').value;
+                    let supplier = document.getElementById('safetySupplier').value;
+                    let price = document.getElementById('safetyPrice').value;
+                    let condition = document.getElementById('safetyCondition').value;
+                    let dateAcquired = document.getElementById('safetyDateAcquired').value || new Date().toISOString().split('T')[0];
+
+                    if (!name || !quantity || !brand || !supplier || !price || !condition) {
+                        Swal.fire("Error!", "Please fill in all fields.", "error");
+                        return;
+                    }
+
+                    let newRow = `
+                        <tr class="text-center">
+                            <td>${name}</td>
+                            <td>${quantity}</td>
+                            <td>${brand}</td>
+                            <td>${supplier}</td>
+                            <td>${price}</td>
+                            <td>${condition}</td>
+                            <td>${dateAcquired}</td>
+                            <td>
+                                <button class="btn btn-sm btn-info edit-btn"><i class="fas fa-edit"></i></button>
+                                <button class="btn btn-sm btn-secondary archive-btn"><i class="fas fa-archive"></i></button>
+                            </td>
+                        </tr>`;
+
+                      document.getElementById('safetyTableBody').innerHTML += newRow;
+
+        Swal.fire({
+            title: "Success!",
+            text: "Material added successfully.",
+            icon: "success",
+            confirmButtonText: "OK"
+        }).then(() => {
+            document.getElementById("addSafetyModal").querySelector(".btn-close").click();
+
+            // Reset form fields
+            document.getElementById('safetyName').value = '';
+            document.getElementById('safetyQuantity').value = '';
+            document.getElementById('safetyBrand').value = '';
+            document.getElementById('safetySupplier').value = '';
+            document.getElementById('safetyPrice').value = '';
+            document.getElementById('safetyCondition').value = '';
+            document.getElementById('safetyDateAcquired').value = '';
+            // Reset date input
+        });
+        });
+
+
+                // EDIT SAFETY EQUIPMENT LOGIC
+        document.addEventListener("click", function (event) {
+            if (event.target.closest(".edit-btn")) {
+                let row = event.target.closest("tr");
+                row.classList.add("editing"); // Mark row as editing
+
+                document.getElementById("editSafetyName").value = row.children[0].innerText;
+                document.getElementById("editSafetyQuantity").value = row.children[1].innerText;
+                document.getElementById("editSafetyBrand").value = row.children[2].innerText;
+                document.getElementById("editSafetySupplier").value = row.children[3].innerText;
+                document.getElementById("editSafetyPrice").value = row.children[4].innerText;
+                document.getElementById("editSafetyCondition").value = row.children[5].innerText;
+                document.getElementById("editSafetyDateAcquired").value = row.children[6].innerText;
+
+                new bootstrap.Modal(document.getElementById("editSafetyModal")).show();
+            }
+        });
+
+        // UPDATE SAFETY EQUIPMENT
+        document.getElementById("updateSafety").addEventListener("click", function () {
+            let row = document.querySelector(".editing");
+            if (!row) return;
+
+            row.children[0].innerText = document.getElementById("editSafetyName").value;
+            row.children[1].innerText = document.getElementById("editSafetyQuantity").value;
+            row.children[2].innerText = document.getElementById("editSafetyBrand").value;
+            row.children[3].innerText = document.getElementById("editSafetySupplier").value;
+            row.children[4].innerText = document.getElementById("editSafetyPrice").value;
+            row.children[5].innerText = document.getElementById("editSafetyCondition").value;
+            row.children[6].innerText = document.getElementById("editSafetyDateAcquired").value;
+
+            Swal.fire({
+                title: "Updated!",
+                text: "Safety Equipment has been updated successfully.",
+                icon: "success",
+                confirmButtonText: "OK"
+            }).then(() => {
+                document.getElementById("editSafetyModal").querySelector(".btn-close").click();
+                row.classList.remove("editing"); // Remove editing class after update
+            });
+        });
+
+
+                // Archive Functionality
+                document.addEventListener("click", function (event) {
+                    if (event.target.closest(".archive-btn")) {
+                        let row = event.target.closest("tr");
+                        Swal.fire({
+                            title: "Are you sure?",
+                            text: "You are about to archive this equipment!",
+                            icon: "warning",
+                            showCancelButton: true,
+                            confirmButtonText: "Yes, archive it!",
+                            cancelButtonText: "Cancel"
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                row.remove();
+                                Swal.fire("Archived!", "Equipment has been archived.", "success");
+                            }
+                        });
+                    }
+                });
+    </script>
+
+</body>
+</html>
