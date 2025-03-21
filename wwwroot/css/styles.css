@@ -54,12 +54,13 @@
         .dark-mode .list-group-item:hover {
             background-color: var(--main-bg-color);
             color: white;
-            border-left: 4px solid pink;
+            border-left: 4px solid yellow;
         }
 
     .dark-mode .fas {
-        color: pink;
-    }
+    color: deepskyblue;
+}
+
 
     .dark-mode .dropdown-menu {
         background-color: #333 !important;
@@ -179,12 +180,12 @@
     .list-group-item:hover,
     .list-group-item:hover {
         background-color: #6a726e;
-        color: pink !important;
-        border-left: 4px solid pink;
+        color: yellow !important;
+        border-left: 4px solid yellow;
     }
 
 .item a.list-group-item:hover {
-    color: pink !important;
+    color: yellow !important;
 }
 
 .list-group-item.active {
@@ -198,16 +199,16 @@
 
 .sub-btn:hover {
     background-color: #6a726e;
-    color: white;
+    color: yellow;
 }
 
 .sub-btn.active {
     background-color: #212529;
-    color: white;
+    color: yellow;
 }
 
     .sub-btn:hover, .sub-btn.active:hover {
-        color: white !important;
+        color: yellow !important;
     }
 
 /* Chevron rotation */
@@ -236,3 +237,6 @@
 }
 /*Responsiveness*/
 
+.icon-bg {
+    background-color: lightgoldenrodyellow !important;
+}

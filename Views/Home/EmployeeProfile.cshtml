@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "Employee Dashboard";
+    ViewData["Title"] = "Employee Profile";
 }
 
 <header>
@@ -15,7 +15,6 @@
             </button>
             <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                 <ul class="navbar-nav align-items-center">
-                    <!-- Employee-specific links -->
                     <li class="nav-item">
                         <a class="nav-link custom-nav-link" asp-controller="Home" asp-action="EmployeeDashBoard">
                             <i class="fas fa-tachometer-alt"></i> Dashboard
@@ -31,8 +30,77 @@
         </div>
     </nav>
 </header>
+<!-- Main content -->
+<div class="container" style="margin-top: 100px;">
+    <h1>Manage Account</h1>
+    <p>Welcome to your profile page!</p>
+<!-- Main Profile Section -->
+<div class="container" style="margin-top: 120px;">
+    <div class="row">
+        <!-- Sidebar Navigation -->
+        <div class="col-md-3">
+            <partial name="_ManageNav" />
+        </div>
 
- <div class="container" style="margin-top: 100px;">
-    <h1>Welcome, Employee!</h1>
-    <p>This is the Employee Dashboard.</p>
+        <!-- Profile Content -->
+        <div class="col-md-9">
+            <div class="card shadow-lg border-0 rounded-4 p-4">
+                <div class="text-center mb-4">
+                    <div class="position-relative d-inline-block">
+                        <i class="bi bi-person-circle text-primary" style="font-size: 5rem;"></i>
+                        <span class="position-absolute bottom-0 end-0 bg-success rounded-circle p-2 border border-white"></span>
+                    </div>
+                    <h3 class="mt-3 fw-bold">Manage Profile</h3>
+                    <p class="text-muted">Update your details and keep your profile up to date.</p>
+                </div>
+
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-primary text-white rounded-top-4">
+                        <h5 class="mb-0"><i class="bi bi-person-lines-fill me-2"></i>Profile Information</h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <form>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="fullName" class="form-label fw-semibold">Full Name</label>
+                                        <input type="text" class="form-control" id="fullName" value="John Doe">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="email" class="form-label fw-semibold">Email Address</label>
+                                        <input type="email" class="form-control bg-light" id="email" value="employee@example.com" readonly>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="phone" class="form-label fw-semibold">Phone Number</label>
+                                        <input type="text" class="form-control" id="phone" value="+1 234 567 890">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="address" class="form-label fw-semibold">Address</label>
+                                        <input type="text" class="form-control" id="address" value="123 Main Street, NY">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="text-end mt-4">
+                                <button type="submit" class="btn btn-primary px-4 py-2 rounded-pill">
+                                    <i class="bi bi-save me-2"></i>Save Changes
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div> <!-- End Card -->
+            </div>
+        </div> <!-- End Col-md-9 -->
+
+    </div> <!-- End Row -->
+</div> <!-- End Container -->
 </div>

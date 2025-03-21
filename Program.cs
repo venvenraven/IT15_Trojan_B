@@ -101,49 +101,57 @@ app.UseAuthorization();
 // 🔹 Route Configuration
 app.UseEndpoints(endpoints =>
 {
+    // Admin Dashboard Route
     endpoints.MapControllerRoute(
-        name: "admin",
-        pattern: "Admin/{action=Dashboard}",
-        defaults: new { controller = "Admin" });
+     name: "admin",
+     pattern: "admin/dashboard",
+     defaults: new { controller = "Admin", action = "Dashboard" });
 
+
+    // Employee Dashboard Route
     endpoints.MapControllerRoute(
         name: "employeeDashboard",
-        pattern: "Home/EmployeeDashboard",
+        pattern: "employee/dashboard",
         defaults: new { controller = "Home", action = "EmployeeDashboard" });
 
+    // Customer Dashboard Route
     endpoints.MapControllerRoute(
         name: "customerDashboard",
-        pattern: "Home/CustomerDashboard",
+        pattern: "customer/dashboard",
         defaults: new { controller = "Home", action = "CustomerDashboard" });
 
+    // Default Route
     endpoints.MapControllerRoute(
         name: "default",
         pattern: "{controller=Home}/{action=Index}/{id?}");
 
+    // Work Order Route
     endpoints.MapControllerRoute(
         name: "workorder",
-        pattern: "{controller=Admin}/{action=WorkOrder}/{id?}");
+        pattern: "workorder/{action=WorkOrder}/{id?}",
+        defaults: new { controller = "Admin" });
 
+    // Materials Route
     endpoints.MapControllerRoute(
         name: "materials",
-        pattern: "{controller=Materials}/{action=Index}/{id?}");
+        pattern: "materials/{action=Index}/{id?}",
+        defaults: new { controller = "Materials" });
+
+    // Tools Route
     endpoints.MapControllerRoute(
-       name: "tools",
-       pattern: "{controller=Admin}/{action=Tools}/{id?}");
-   // endpoints.MapControllerRoute(
-     //  name: "safety",
-      // pattern: "{controller=Admin}/{action=Safety}/{id?}");
+        name: "tools",
+        pattern: "tools/{action=Tools}/{id?}",
+        defaults: new { controller = "Admin" });
 
+    // Safety Equipment Route
     endpoints.MapControllerRoute(
-       name: "default",
-       pattern: "{controller=SafetyEquipment}/{action=Index}/{id?}");
+        name: "safetyEquipment",
+        pattern: "safetyequipment/{action=Index}/{id?}",
+        defaults: new { controller = "SafetyEquipment" });
 
-
+    // SignalR Hub Route
     endpoints.MapHub<MaterialsHub>("/materialsHub");
-
-
-
-
+    
     endpoints.MapRazorPages(); // ✅ Ensure Razor Pages are mapped
 });
 

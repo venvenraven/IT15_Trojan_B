@@ -22,6 +22,7 @@ namespace IT15_Trojan_B.Data
         public DbSet<Order> Orders { get; set; }
         public DbSet<Appointment> Appointments { get; set; }
         public DbSet<Payment> Payments { get; set; }
+        public DbSet<SecurityLog> SecurityLogs { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

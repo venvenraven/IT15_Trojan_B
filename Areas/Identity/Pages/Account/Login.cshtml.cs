@@ -12,6 +12,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
+using IT15_Trojan_B.Data; // Added for ApplicationDbContext
+using IT15_Trojan_B.Models; // Added for SecurityLog
 
 namespace IT15_Trojan_B.Areas.Identity.Pages.Account
 {
@@ -20,12 +23,17 @@ namespace IT15_Trojan_B.Areas.Identity.Pages.Account
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly ILogger<LoginModel> _logger;
+        private readonly ApplicationDbContext _context; // Added ApplicationDbContext
 
-        public LoginModel(SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager, ILogger<LoginModel> logger)
+        public LoginModel(SignInManager<IdentityUser> signInManager,
+            UserManager<IdentityUser> userManager,
+            ILogger<LoginModel> logger,
+            ApplicationDbContext context) // Injected ApplicationDbContext
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _logger = logger;
+            _context = context; // Assigned context
         }
 
         [BindProperty]
@@ -89,9 +97,35 @@ namespace IT15_Trojan_B.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
+
+                    // Get the user's IP address
+                    string ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
+
+                    // Get user roles
+                    var userRoles = await _context.UserRoles
+                        .Where(ur => ur.UserId == user.Id)
+                        .Join(_context.Roles, ur => ur.RoleId, r => r.Id, (ur, r) => r.Name)
+                        .ToListAsync();
+
+                    string userRole = userRoles.Any() ? string.Join(", ", userRoles) : "Unknown";
+
+                    // Create a new security log entry
+                    var log = new SecurityLog
+                    {
+                        UserName = user.UserName,
+                        UserRole = userRole,
+                        Action = "User Logged In",
+                        IPAddress = ipAddress,
+                        Timestamp = DateTime.UtcNow
+                    };
+
+                    // Save the log entry to the database
+                    _context.SecurityLogs.Add(log);
+                    await _context.SaveChangesAsync();
+
                     var roles = await _userManager.GetRolesAsync(user);
 
-                    if (roles.Contains("Admin")) return LocalRedirect("~/Home/AdminDashboard");
+                    if (roles.Contains("Admin")) return LocalRedirect("~/Admin/Dashboard");
                     if (roles.Contains("Employee")) return LocalRedirect("~/Home/EmployeeDashboard");
                     if (roles.Contains("Customer")) return LocalRedirect("~/Home/CustomerDashboard");
 
@@ -105,14 +139,11 @@ namespace IT15_Trojan_B.Areas.Identity.Pages.Account
                 {
                     _logger.LogWarning("User account locked out.");
                     ViewData["IsLockedOut"] = true;
-                    // 🔹 Set TempData message for lockout alert
                     TempData["LockoutMessage"] = "Too many failed login attempts. Your account has been locked for 10 minutes.";
 
                     return RedirectToPage("./Lockout");
                 }
-
-            
-            else
+                else
                 {
                     ModelState.AddModelError(string.Empty, "Invalid login attempt.");
                     return Page();
