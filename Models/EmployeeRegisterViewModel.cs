@@ -33,6 +33,7 @@ namespace IT15_Trojan_B.ViewModels
         [Required]
         public string Specialty { get; set; } // Electrical, Plumber, etc.
 
-        public IFormFile UploadFile { get; set; } // Upload field for documents
+        [Required(ErrorMessage = "Please upload a file.")]
+        public IFormFile UploadFile { get; set; }
     }
 }

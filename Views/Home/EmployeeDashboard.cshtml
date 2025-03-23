@@ -31,13 +31,16 @@
                         <a class="nav-link custom-nav-link" href="@Url.Action("EmployeeDashboard", "Home")"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link custom-nav-link" href="/employee/tasks"> <i class="fas fa-tasks"></i>Tasks</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link custom-nav-link" href="@Url.Action("EmployeeProfile", "Home")">
-                            <i class="fas fa-user-circle"></i> Profile
+                        <a class="nav-link custom-nav-link" href="#" data-bs-toggle="modal" data-bs-target="#tasksModal">
+                            <i class="fas fa-tasks"></i> Tasks
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <form class="form-inline" method="get" action="/Identity/Account/Manage">
+                            <button type="submit" class="nav-link btn btn-link custom-nav-link">
+                                <i class="fas fa-user-circle"></i> Manage Profile
+                            </button>
+                        </form>
                     <li class="nav-item">
                         <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
                             <button type="submit" class="nav-link btn btn-link custom-nav-link">
@@ -82,54 +85,42 @@
                     </div>
                 </div>
             </div>
-        
-        <!-- Assigned Projects Table -->
-        <div class="row mt-3 bg-secondary text-white p-3 rounded">
-            <div class="col-12">
-                <h5><i class="bi bi-clipboard-check"></i> Assigned Projects</h5>
-                <table class="table table-striped">
-                    <thead class="text-white">
-                        <tr>
-                            <th>Project Name</th>
-                            <th>Customer</th>
-                            <th>Contact #</th>
-                            <th>Job Description</th>
-                            <th>Address</th>
-                            <th>Deadline</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td>
-                                <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#customerMapModal" onclick="loadCustomerMap(10.3157, 123.8854)">
-                                    <i class="bi bi-geo-alt fs-6"></i> View
-                                </button>
-                            </td>
-                            <td></td>
-                            <td><span class="badge bg-primary text-white"></span></td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td>
-                                <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#customerMapModal" onclick="loadCustomerMap(14.5995, 120.9842)">
-                                    <i class="bi bi-geo-alt fs-6"></i> View
-                                </button>
-                            </td>
-                            <td></td>
-                            <td><span class="badge bg-warning text-white"></span></td>
-                        </tr>
-                    </tbody>
-                </table>
+            <!-- Assigned Projects Table -->
+            <div class="row mt-3 bg-secondary text-white p-3 rounded">
+                <div class="col-12">
+                    <h5><i class="bi bi-clipboard-check"></i> Assigned Projects</h5>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead class="text-white">
+                                <tr>
+                                    <th>Project Name</th>
+                                    <th>Customer</th>
+                                    <th>Contact #</th>
+                                    <th>Job Description</th>
+                                    <th>Address</th>
+                                    <th>Deadline</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>
+                                        <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#customerMapModal" onclick="loadCustomerMap(10.3157, 123.8854)">
+                                            <i class="bi bi-geo-alt fs-6"></i> View
+                                        </button>
+                                    </td>
+                                    <td></td>
+                                    <td><span class="badge bg-primary text-white"></span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div> <!-- End of table-responsive -->
+                </div>
             </div>
-        </div>
         
         <div class="row mt-4 bg-secondary text-white p-3 rounded">
             <!-- Scheduling Table -->
@@ -189,6 +180,79 @@
             </div>
         </div>
     </div>
+        <!-- Bootstrap Modal for Tasks -->
+        <div class="modal fade" id="tasksModal" tabindex="-1" aria-labelledby="tasksModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content shadow-lg border-0">
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title fw-bold" id="tasksModalLabel"><i class="fas fa-tasks"></i> Assigned Tasks</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body bg-light">
+                        <div class="table-responsive">
+                            <table class="table table-hover text-center align-middle">
+                                <thead class="bg-dark text-white">
+                                    <tr>
+                                        <th>Task Name</th>
+                                        <th>Description</th>
+                                        <th>Deadline</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="taskTableBody">
+                                    <!-- Task data will be inserted here dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer bg-secondary text-white d-flex justify-content-between">
+                        <span class="fst-italic">Manage your tasks efficiently.</span>
+                        <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Task Modal -->
+        <div class="modal fade" id="editTaskModal" tabindex="-1" aria-labelledby="editTaskModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header bg-warning text-white">
+                        <h5 class="modal-title fw-bold" id="editTaskModalLabel">Edit Task</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="editTaskForm">
+                            <input type="hidden" id="editTaskIndex">
+                            <div class="mb-2">
+                                <label class="form-label">Task Name</label>
+                                <input type="text" id="editTaskName" class="form-control" required>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">Description</label>
+                                <input type="text" id="editTaskDesc" class="form-control" required>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">Deadline</label>
+                                <input type="date" id="editTaskDeadline" class="form-control" required>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">Status</label>
+                                <select id="editTaskStatus" class="form-select">
+                                    <option value="Pending">Pending</option>
+                                    <option value="In Progress">In Progress</option>
+                                    <option value="Completed">Completed</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-warning w-100">Update Task</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <div id="customerMapModal" class="modal fade" tabindex="-1">
             <div class="modal-dialog modal-lg">
@@ -204,7 +268,7 @@
             </div>
         </div>
     </div>
-    <script>
+    <script>         
         function loadCustomerMap() {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(position => {
@@ -223,7 +287,72 @@
         console.error("Geolocation is not supported by this browser.");
     }
 }
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const taskTableBody = document.getElementById("taskTableBody");
+            const editTaskForm = document.getElementById("editTaskForm");
 
+            let tasks = [
+                { name: "Inspect Site", description: "Check safety compliance", deadline: "2024-04-15", status: "Pending" },
+                { name: "Install Wiring", description: "Lay electrical wiring", deadline: "2024-04-20", status: "In Progress" },
+                { name: "Finalize Report", description: "Submit project report", deadline: "2024-04-25", status: "Completed" }
+            ];
+
+            function renderTasks() {
+                taskTableBody.innerHTML = "";
+                tasks.forEach((task, index) => {
+                    let statusClass = task.status === "Pending" ? "badge-pending" :
+                                      task.status === "In Progress" ? "badge-in-progress" : "badge-completed";
+
+                    const row = `
+                        <tr>
+                            <td>${task.name}</td>
+                            <td>${task.description}</td>
+                            <td>${task.deadline}</td>
+                            <td><span class="badge ${statusClass} p-2">${task.status}</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-warning" onclick="editTask(${index})"><i class="fas fa-edit"></i> Edit</button>
+                            </td>
+                        </tr>
+                    `;
+                    taskTableBody.innerHTML += row;
+                });
+            }
+
+            function editTask(index) {
+                console.log("Editing task at index:", index);
+                const selectedTask = tasks[index];
+
+                // Open Edit Modal & Populate Fields
+                document.getElementById("editTaskIndex").value = index;
+                document.getElementById("editTaskName").value = selectedTask.name;
+                document.getElementById("editTaskDesc").value = selectedTask.description;
+                document.getElementById("editTaskDeadline").value = selectedTask.deadline;
+                document.getElementById("editTaskStatus").value = selectedTask.status;
+
+                new bootstrap.Modal(document.getElementById("editTaskModal")).show();
+            }
+
+            editTaskForm.addEventListener("submit", function (e) {
+                e.preventDefault();
+                const index = document.getElementById("editTaskIndex").value;
+                tasks[index] = {
+                    name: document.getElementById("editTaskName").value,
+                    description: document.getElementById("editTaskDesc").value,
+                    deadline: document.getElementById("editTaskDeadline").value,
+                    status: document.getElementById("editTaskStatus").value
+                };
+
+                console.log("Updated Task:", tasks[index]);
+
+                // Close modal and re-render table
+                bootstrap.Modal.getInstance(document.getElementById("editTaskModal")).hide();
+                renderTasks();
+            });
+
+            renderTasks();
+        });
     </script>
 </body>
 </html>

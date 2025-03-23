@@ -20,6 +20,8 @@ namespace IT15_Trojan_B.Data
         public DbSet<ToolEquipment> ToolEquipments { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<SecurityLog> SecurityLogs { get; set; }
+        public DbSet<Project> Projects { get; set; }
+        public DbSet<Invoice> Invoices { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -6,6 +6,6 @@ namespace IT15_Trojan_B.Models
     {
         public string FullName { get; set; }
         public string Address { get; set; }
+        
     }
-
 }

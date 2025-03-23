@@ -4,6 +4,7 @@ namespace IT15_Trojan_B.Models
 {
     public class Employee
     {
+
         [Key]
         public int Id { get; set; }
 
@@ -30,6 +31,8 @@ namespace IT15_Trojan_B.Models
         public bool IsActive { get; set; } = true; // Default to active employee
         public bool IsAssigned { get; set; } = false; // Default to unassigned
 
-        public string UploadedFilePath { get; set; } // Store file path for uploaded documents
+        public string? UploadedFilePath { get; set; }
+
+        // Store file path for uploaded documents
     }
 }

@@ -26,15 +26,16 @@ body {
 
 /* Logo Size Adjustments */
 .navbar-logo {
-    height: 40px; 
-    width: auto; 
+    height: 40px;
+    width: auto;
 }
 
 @media (max-width: 768px) {
     .navbar-logo {
-        height: 35px; 
+        height: 35px;
     }
 }
+
 .navbar-brand {
     display: flex;
     align-items: center;
@@ -42,31 +43,30 @@ body {
 
 .navbar-text {
     font-size: 1.2rem; /* Adjust size */
-    color: black; 
+    color: black;
 }
 
 .custom-nav-link {
     position: relative;
     font-weight: normal;
-    color: black !important; 
+    color: black !important;
     text-transform: uppercase;
 }
 
-.custom-nav-link:hover {
-    color: deepskyblue !important; 
-    background: rgba(255, 255, 255, 0.2); 
-   
-}
+    .custom-nav-link:hover {
+        color: deepskyblue !important;
+        background: rgba(255, 255, 255, 0.2);
+    }
 
-.custom-nav-link::after {
-    content: "";
-    display: block;
-    background: deepskyblue;
-}
+    .custom-nav-link::after {
+        content: "";
+        display: block;
+        background: deepskyblue;
+    }
 
-.custom-nav-link:hover::after {
-    width: 100%;
-}
+    .custom-nav-link:hover::after {
+        width: 100%;
+    }
 
 /* Show dropdown on hover */
 .nav-item.dropdown:hover .dropdown-menu {
@@ -84,25 +84,24 @@ body {
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-
 /* Custom Get Started Button */
 .btn-get-started {
-    background-color: black !important; 
-    color: antiquewhite !important; 
+    background-color: black !important;
+    color: antiquewhite !important;
     font-weight: bold;
     transition: all 0.3s ease-in-out;
     border-radius: 8px;
     padding: 12px 25px;
-    border: 2px solid black; 
+    border: 2px solid black;
 }
 
-/* Hover Effect */
-.btn-get-started:hover {
-    background-color: deepskyblue !important; 
-    color: white !important; 
-    transform: scale(1.05); 
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); 
-}
+    /* Hover Effect */
+    .btn-get-started:hover {
+        background-color: deepskyblue !important;
+        color: white !important;
+        transform: scale(1.05);
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    }
 
 /* Section Styling */
 .about-us, .contact-us {
@@ -110,17 +109,17 @@ body {
     text-align: center;
 }
 
-.about-us h2, .contact-us h2 {
-    font-size: 2.5rem;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 20px;
-}
+    .about-us h2, .contact-us h2 {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 20px;
+    }
 
-.about-us p, .contact-us p {
-    font-size: 1.2rem;
-    color: #666;
-}
+    .about-us p, .contact-us p {
+        font-size: 1.2rem;
+        color: #666;
+    }
 
 .table-container {
     display: flex;
@@ -131,6 +130,7 @@ body {
     min-height: 200px;
     min-width: auto;
 }
+
 .services {
     background: #ffffff;
     padding: 80px 0;
@@ -183,3 +183,34 @@ body {
         font-size: 1rem;
         line-height: 1.6;
     }
+
+/* Center navbar in mobile/hamburger mode */
+@media (max-width: 991px) {
+    .navbar-collapse {
+        text-align: center;
+    }
+
+    .navbar-nav {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+}
+.table-hover tbody tr:hover {
+    background-color: #f8f9fa !important;
+}
+
+.badge-pending {
+    background-color: #ffc107 !important;
+    color: black !important;
+}
+
+.badge-in-progress {
+    background-color: #17a2b8 !important;
+    color: white !important;
+}
+
+.badge-completed {
+    background-color: #28a745 !important;
+    color: white !important;
+}

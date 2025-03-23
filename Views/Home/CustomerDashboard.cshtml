@@ -12,7 +12,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="~/css/styles.css">
+    <link rel="stylesheet" href="~/css/styles.css">   
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top py-2">
@@ -32,7 +32,7 @@
                         <a class="nav-link custom-nav-link" href="@Url.Action("CustomerDashboard", "Home")"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link custom-nav-link" href="#activeJobOrders" id="orderLink">
+                        <a class="nav-link custom-nav-link" href="#" data-bs-toggle="modal" data-bs-target="#myOrdersModal">
                             <i class="fas fa-shopping-cart"></i> Orders
                         </a>
                     </li>
@@ -113,12 +113,12 @@
                             <p><strong>Job Type:</strong> <span id="jobType"></span></p>
                             <p><strong>Assigned Contractor:</strong> <span id="jobContractor"></span></p>
                             <p><strong>Status:</strong> <span id="jobStatus" class="badge"></span></p>
-                            <p><strong>Estimated Completion:</strong> <span id="jobCompletion"></span></p>
-                            <p><strong>Location:</strong> <span id="jobLocation"></span></p>
+                            <p><strong>Deadline:</strong> <span id="jobDeadline"></span></p>
+                            <p><strong>Location:</strong> <span id="jobAddress"></span></p>
                             <p><strong>Job Description:</strong> <span id="jobDescription"></span></p>
                             <p><strong>Materials Used:</strong> <span id="jobMaterials"></span></p>
-                            <p><strong>Labor Cost:</strong> $<span id="jobLaborCost"></span></p>
-                            <p><strong>Total Cost:</strong> $<span id="jobTotalCost"></span></p>
+                            <p><strong>Labor Cost:</strong> <span id="jobLaborCost"></span></p>
+                            <p><strong>Total Cost:</strong> <span id="jobTotalCost"></span></p>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -162,7 +162,7 @@
                 </div>
             </div>
 
-            <!-- Modal -->
+            <!-- Modal for Adding New Project -->
             <div class="modal fade" id="addProjectModal" tabindex="-1" aria-labelledby="addProjectModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
@@ -173,25 +173,53 @@
                         <div class="modal-body">
                             <form id="newProjectForm">
                                 <div class="mb-3">
-                                    <label for="projectName" class="form-label">Project Name</label>
-                                    <input type="text" class="form-control" id="projectName" required>
+                                    <label for="ProjectName" class="form-label">Project Name</label>
+                                    <input type="text" class="form-control" id="ProjectName" required>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="jobDescription" class="form-label">Job Description</label>
-                                    <textarea class="form-control" id="jobDescription" required></textarea>
+                                    <label for="JobDescription" class="form-label">Job Description</label>
+                                    <textarea class="form-control" id="JobDescription" required></textarea>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="address" class="form-label">Address</label>
-                                    <input type="text" class="form-control" id="address" required>
+                                    <label for="Address" class="form-label">Address</label>
+                                    <input type="text" class="form-control" id="Address" required>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="deadline" class="form-label">Deadline</label>
-                                    <input type="date" class="form-control" id="deadline" required>
+                                    <label for="Deadline" class="form-label">Deadline</label>
+                                    <input type="date" class="form-control" id="Deadline" required>
                                 </div>
-                                <button type="submit" class="btn btn-success float-end" data-bs-toggle="tooltip" title="Save Project">
-                                    <i class="bi bi-save"></i>
+                                <button type="submit" class="btn btn-success float-end" id="saveProjectBtn">
+                                    <i class="bi bi-save"></i> Save
                                 </button>
                             </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- My Orders Modal -->
+            <div class="modal fade" id="myOrdersModal" tabindex="-1" aria-labelledby="myOrdersModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header bg-primary text-white">
+                            <h5 class="modal-title" id="myOrdersModalLabel"><i class="bi bi-cart-check"></i> My Orders</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Project Name</th>
+                                        <th>Job Description</th>
+                                        <th>Address</th>
+                                        <th>Deadline</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ordersTableBody">
+                                    <!-- Orders will be dynamically loaded here -->
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -202,7 +230,7 @@
                 <div class="card shadow rounded-3 border-4">
                     <div class="card-header bg-dark text-white fw-bold">Billing & Payments</div>
                     <div class="card-body text-center">
-                        <button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#invoiceModal">
+                        <button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#invoiceModal" onclick="fetchInvoices()">
                             <i class="bi bi-receipt"></i> View Invoices
                         </button>
                         <a href="#" class="btn btn-outline-secondary">
@@ -211,98 +239,81 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <!-- Invoice Modal -->
-    <div class="modal fade" id="invoiceModal" tabindex="-1" aria-labelledby="invoiceModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header bg-success text-white">
-                    <h5 class="modal-title" id="invoiceModalLabel">Invoice</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <!-- Company Details -->
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h5 class="fw-bold">Trojan Builders</h5>
-                            <p>1234 Builder St, Construction City, PH</p>
-                            <p>Email: contact@trojanbuilders.com</p>
+            <!-- Invoice Modal -->
+            <div class="modal fade" id="invoiceModal" tabindex="-1" aria-labelledby="invoiceModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header bg-success text-white">
+                            <h5 class="modal-title" id="invoiceModalLabel">
+                                <i class="bi bi-receipt"></i> Invoice
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                        <div class="col-md-6 text-end">
-                            <h6 class="fw-bold">Invoice # </h6>
-                            <p>Date:</p>
-                        </div>
-                    </div>
-                    <hr>
-
-                    <!-- Client Details -->
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h6 class="fw-bold">Bill To:</h6>
-                            <p>CustomerName:</p>
-                            <p>Address:</p>
-                            <p>Email: </p>
-                        </div>
-                        <div class="col-md-6 text-end">
-                            <h6 class="fw-bold">Project Details:</h6>
-                            <p><strong>Work Order </strong></p>
-                            <p>Project: </p>
-                            <p>Assigned Worker:</p>
-                        </div>
-                    </div>
-                    <hr>
-
-                    <!-- Billing Table -->
-                    <table class="table table-bordered text-center">
-                        <thead class="bg-light">
-                            <tr>
-                                <th>Description</th>
-                                <th>Qty</th>
-                                <th>Unit Price</th>
-                                <th>Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>                               
-                            </tr>
-                        </tbody>
-                    </table>
-
-                    <!-- Total Calculation -->
-                    <div class="row">
-                        <div class="col-md-6"></div>
-                        <div class="col-md-6 text-end">
-                            <h5 class="fw-bold">Total:</h5>
-                            <p class="text-danger">Due Date: </p>
-                        </div>
-                    </div>
-
-                    <hr>
-
-                    <div class="text-end">
-                        <button class="btn btn-primary" onclick="processPayment()">
-                            <i class="bi bi-credit-card"></i> Pay Now
-                        </button>
-                        <button class="btn btn-secondary" onclick="printInvoice()">
-                            <i class="bi bi-printer"></i> Print Invoice
-                        </button>
-                    </div>
-                    <!-- Payment Confirmation Modal -->
-                    <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content">
-                                <div class="modal-header bg-success text-white">
-                                    <h5 class="modal-title" id="paymentModalLabel">Payment Processing</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <div class="modal-body">
+                            <!-- Company Details -->
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h5 class="fw-bold">Trojan Builders</h5>
+                                    <p>1234 Builder St, Construction City, PH</p>
+                                    <p>Email: contact@trojanbuilders.com</p>
                                 </div>
-                                <div class="modal-body text-center">
-                                    <p class="fw-bold">Processing your payment, please wait...</p>
-                                    <div class="spinner-border text-success" role="status">
-                                        <span class="visually-hidden">Processing...</span>
-                                    </div>
+                                <div class="col-md-6 text-end">
+                                    <h6 class="fw-bold">Invoice # <span id="invoiceNumber"></span></h6>
+                                    <p>Date: <span id="invoiceDate"></span></p>
                                 </div>
+                            </div>
+                            <hr>
+
+                            <!-- Client Details -->
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6 class="fw-bold">Bill To:</h6>
+                                    <p><strong>Name: </strong> <span id="customerName"></span></p>
+                                    <p><strong>Address: </strong> <span id="customerAddress"></span></p>
+                                    <p><strong>Email: </strong> <span id="customerEmail"></span></p>
+                                </div>
+                                <div class="col-md-6 text-end">
+                                    <h6 class="fw-bold">Project Details:</h6>
+                                    <p><strong>Work Order: </strong> <span id="workOrder"></span></p>
+                                    <p><strong>Project: </strong> <span id="projectName"></span></p>
+                                    <p><strong>Assigned Worker: </strong> <span id="assignedWorker"></span></p>
+                                </div>
+                            </div>
+                            <hr>
+
+                            <!-- Billing Table -->
+                            <table class="table table-bordered text-center">
+                                <thead class="bg-light">
+                                    <tr>
+                                        <th>Description</th>
+                                        <th>Qty</th>
+                                        <th>Unit Price</th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="invoiceTableBodyDetails"></tbody>
+                            </table>
+
+                            <!-- Total Calculation -->
+                            <div class="row">
+                                <div class="col-md-6"></div>
+                                <div class="col-md-6 text-end">
+                                    <h5 class="fw-bold">Total: <span id="totalInvoice"></span></h5>
+                                    <p class="text-danger">Due Date: <span id="dueDate"></span></p>
+                                </div>
+                            </div>
+
+                            <hr>
+
+                            <!-- Inside Invoice Modal -->
+                            <div class="text-end">
+                                <button class="btn btn-primary" id="payNowBtn">
+                                    <i class="bi bi-credit-card"></i> Pay Now
+                                </button>
+                                <button class="btn btn-secondary" id="printInvoiceBtn">
+                                    <i class="bi bi-printer"></i> Print Invoice
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -310,9 +321,41 @@
             </div>
         </div>
     </div>
+
     <!-- Bootstrap JavaScript (Ensure Bootstrap JS is included) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+            function showJobDetails(jobId, customerName, jobType, jobContractor, jobStatus, jobDeadline, jobAddress, jobDescription, jobMaterials, jobLaborCost, jobTotalCost) {
+            // Populate modal fields
+            document.getElementById('jobId').textContent = jobId;
+            document.getElementById('customerName').textContent = customerName;
+            document.getElementById('jobType').textContent = jobType;
+            document.getElementById('jobContractor').textContent = jobContractor;
+
+            // Set status badge color based on status
+            let statusElement = document.getElementById('jobStatus');
+            statusElement.textContent = jobStatus;
+            statusElement.className = 'badge'; // Reset classes
+            if (jobStatus === 'Pending') {
+                statusElement.classList.add('bg-warning', 'text-dark');
+            } else if (jobStatus === 'Completed') {
+                statusElement.classList.add('bg-success');
+            } else if (jobStatus === 'In Progress') {
+                statusElement.classList.add('bg-primary');
+            }
+
+            document.getElementById('jobDeadline').textContent = jobDeadline;
+            document.getElementById('jobAddress').textContent = jobAddress;
+            document.getElementById('jobDescription').textContent = jobDescription;
+            document.getElementById('jobMaterials').textContent = jobMaterials;
+            document.getElementById('jobLaborCost').textContent = `₱${jobLaborCost}`;
+            document.getElementById('jobTotalCost').textContent = `₱${jobTotalCost}`;
+
+
+                // Show the modal
+            let jobOrderModal = new bootstrap.Modal(document.getElementById('jobOrderModal'));
+            jobOrderModal.show();
+        }
       function logout() {
             window.location.href = '/Identity/Account/Logout';
         }
@@ -326,20 +369,162 @@
                 return new bootstrap.Tooltip(tooltipTriggerEl);
             });
         });
-           document.getElementById("orderLink").addEventListener("click", function (event) {
-              event.preventDefault(); 
+                document.addEventListener("DOMContentLoaded", function () {
 
-              let target = document.getElementById("activeJobOrders");
-              let navbarHeight = document.querySelector(".navbar").offsetHeight; // Get navbar height
+            // Function to Load My Orders
+            function loadMyOrders() {
+                fetch('/Project/MyOrders')
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log("My Orders Data:", data); // Debugging
+                        if (!Array.isArray(data)) {
+                            console.error("Unexpected response format:", data);
+                            return;
+                        }
 
-              // Smoothly scroll to the section, adjusting for the navbar height
-              window.scrollTo({
-                  top: target.offsetTop - navbarHeight - 20, 
-                  behavior: "smooth"
-              });
-          });   
-    </script>
+                        let ordersTableBody = document.getElementById("ordersTableBody");
+                        ordersTableBody.innerHTML = ""; // Clear previous data
 
+                        if (data.length === 0) {
+                            ordersTableBody.innerHTML = `<tr><td colspan="5" class="text-center">No orders found.</td></tr>`;
+                            return;
+                        }
 
+                        data.forEach(order => {
+                            let row = `<tr>
+                                <td>${order.projectName}</td>
+                                <td>${order.jobDescription}</td>
+                                <td>${order.address}</td>
+                                <td>${order.deadline}</td>
+                                <td><span class="badge ${order.status === 'Approved' ? 'bg-success' : 'bg-warning'}">${order.status}</span></td>
+                            </tr>`;
+                            ordersTableBody.innerHTML += row;
+                        });
+                    })
+                    .catch(error => console.error('Error fetching orders:', error));
+            }
+
+            // Event Listener to Load Orders When "My Orders" Modal Opens
+            document.getElementById("myOrdersModal").addEventListener("show.bs.modal", loadMyOrders);
+
+            // Handling Project Form Submission
+            document.getElementById("newProjectForm").addEventListener("submit", function (event) {
+                event.preventDefault(); // Prevent default form submission
+                console.log("Submit button clicked!"); // Debugging
+
+                let projectData = {
+                    ProjectName: document.getElementById("ProjectName").value,
+                    JobDescription: document.getElementById("JobDescription").value,
+                    Address: document.getElementById("Address").value,
+                    Deadline: new Date(document.getElementById("Deadline").value).toISOString() // Properly formatted date
+                };
+
+                console.log("Sending data:", projectData); // Debugging
+
+                fetch('/Project/AddProject', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(projectData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Response from API:", data); // Debugging
+                    if (data.success) {
+                        alert("Project added successfully!");
+                        document.getElementById("newProjectForm").reset();
+                        loadMyOrders(); // Refresh the modal orders
+
+                        // Close modal
+                        var modalEl = document.getElementById('addProjectModal');
+                        var modalInstance = bootstrap.Modal.getInstance(modalEl);
+                        if (!modalInstance) {
+                            modalInstance = new bootstrap.Modal(modalEl);
+                        }
+                        modalInstance.hide();
+                    } else {
+                        alert("Failed to add project: " + data.message);
+                    }
+                })
+                .catch(error => console.error('Error adding project:', error));
+            });
+        });
+
+                document.addEventListener("DOMContentLoaded", function () {
+
+            function loadInvoices() {
+                fetch('/Billing/GetInvoices') // Updated to use BillingController
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log("Invoices Data:", data); // Debugging
+
+                        let invoiceTableBody = document.querySelector("#invoiceModal tbody");
+                        invoiceTableBody.innerHTML = ""; // Clear previous data
+
+                        if (data.length === 0) {
+                            invoiceTableBody.innerHTML = `<tr><td colspan="4" class="text-center">No invoices found.</td></tr>`;
+                            return;
+                        }
+
+                        data.forEach(invoice => {
+                            let row = `<tr>
+                                <td>${invoice.Description}</td>
+                                <td>${invoice.Quantity}</td>
+                                <td>₱${invoice.UnitPrice.toFixed(2)}</td>
+                                <td>₱${invoice.Total.toFixed(2)}</td>
+                            </tr>`;
+                            invoiceTableBody.innerHTML += row;
+
+                            // Fill invoice details in the modal
+                            document.querySelector("#invoiceModal .modal-title").innerText = `Invoice #${invoice.InvoiceNumber}`;
+                            document.querySelector("#invoiceModal .col-md-6 p:nth-child(2)").innerText = `Customer: ${invoice.CustomerName}`;
+                            document.querySelector("#invoiceModal .col-md-6 p:nth-child(3)").innerText = `Address: ${invoice.Address}`;
+                            document.querySelector("#invoiceModal .col-md-6 p:nth-child(4)").innerText = `Email: ${invoice.Email}`;
+                            document.querySelector("#invoiceModal .col-md-6.text-end p:nth-child(2)").innerText = `Project: ${invoice.ProjectName}`;
+                            document.querySelector("#invoiceModal .col-md-6.text-end p:nth-child(3)").innerText = `Assigned Worker: ${invoice.AssignedWorker}`;
+                            document.querySelector("#invoiceModal .text-end h5").innerText = `Total: ₱${invoice.Total.toFixed(2)}`;
+                            document.querySelector("#invoiceModal .text-danger").innerText = `Due Date: ${invoice.DueDate}`;
+
+                            // Attach event listener for the Pay Now button
+                            document.querySelector("#payNowBtn").setAttribute("data-invoice-id", invoice.InvoiceNumber);
+                        });
+                    })
+                    .catch(error => console.error('Error fetching invoices:', error));
+            }
+
+            document.getElementById("invoiceModal").addEventListener("show.bs.modal", loadInvoices);
+
+            // Process Payment
+            function processPayment() {
+                let invoiceId = document.querySelector("#payNowBtn").getAttribute("data-invoice-id");
+
+                fetch('/Billing/ProcessPayment', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ invoiceId: invoiceId })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert("Payment successful!");
+                        loadInvoices(); // Refresh invoice data after payment
+                    } else {
+                        alert("Payment failed: " + data.message);
+                    }
+                })
+                .catch(error => console.error('Error processing payment:', error));
+            }
+
+            document.getElementById("payNowBtn").addEventListener("click", processPayment);
+
+            // Print Invoice Function
+            function printInvoice() {
+                window.print();
+            }
+
+            document.getElementById("printInvoiceBtn").addEventListener("click", printInvoice);
+
+        });
+
+    </script>    
 </body>
 </html>
