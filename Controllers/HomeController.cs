@@ -60,12 +60,7 @@ namespace IT15_Trojan_B.Controllers
             return View();
         }
 
-        public IActionResult CustomerProfile()
-        {
-            return View();
-        }
-
-        public IActionResult EmployeeProfile()
+        public IActionResult CustomerDashboard()
         {
             return View();
         }
