@@ -1,4 +1,5 @@
-﻿@{
+﻿
+@{
     ViewData["Title"] = "Customer Dashboard";
 }
 
@@ -34,15 +35,14 @@
                         <a class="nav-link custom-nav-link" href="#activeJobOrders" id="orderLink">
                             <i class="fas fa-shopping-cart"></i> Orders
                         </a>
-
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link custom-nav-link" href="@Url.Action("CustomerProfile", "Home")">
-                            <i class="fas fa-user-circle"></i> Manage Profile
-                        </a>
+                        <form class="form-inline" method="get" action="/Identity/Account/Manage">
+                            <button type="submit" class="nav-link btn btn-link custom-nav-link">
+                                <i class="fas fa-user-circle"></i> Manage Profile
+                            </button>
+                        </form>
                     </li>
-
-
                     <li class="nav-item">
                         <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
                             <button type="submit" class="nav-link btn btn-link custom-nav-link">
@@ -91,7 +91,7 @@
                                             '', '', '', '',
                                             '', '', '',
                                             '', ', , ',
-                                            5, 
+                                            ,
                                         )">
                                             <i class="bi bi-eye"></i> View
                                         </button>
@@ -200,23 +200,23 @@
                     </div>
                 </div>
             </div>
-       
-    <!-- Billing & Payments -->
-    <div class="col-md-12 mb-3">
-        <div class="card shadow rounded-3 border-4">
-            <div class="card-header bg-dark text-white fw-bold">Billing & Payments</div>
-            <div class="card-body text-center">
-                <button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#invoiceModal">
-                    <i class="bi bi-receipt"></i> View Invoices
-                </button>
-                <a href="#" class="btn btn-outline-secondary">
-                    <i class="bi bi-clock-history"></i> Payment History
-                </a>
+
+            <!-- Billing & Payments -->
+            <div class="col-md-12 mb-3">
+                <div class="card shadow rounded-3 border-4">
+                    <div class="card-header bg-dark text-white fw-bold">Billing & Payments</div>
+                    <div class="card-body text-center">
+                        <button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#invoiceModal">
+                            <i class="bi bi-receipt"></i> View Invoices
+                        </button>
+                        <a href="#" class="btn btn-outline-secondary">
+                            <i class="bi bi-clock-history"></i> Payment History
+                        </a>
+                    </div>
+                </div>
             </div>
-         </div>
         </div>
-     </div>
- </div>
+    </div>
 
     <!-- Invoice Modal -->
     <div class="modal fade" id="invoiceModal" tabindex="-1" aria-labelledby="invoiceModalLabel" aria-hidden="true">
@@ -231,12 +231,12 @@
                     <div class="row">
                         <div class="col-md-6">
                             <h5 class="fw-bold">Trojan Builders</h5>
-                            <p>1234 Construction Ave, City, Country</p>
-                            <p>Email: support@trojanbuilders.com</p>
+                            <p>1234 Builder St, Construction City, PH</p>
+                            <p>Email: contact@trojanbuilders.com</p>
                         </div>
                         <div class="col-md-6 text-end">
-                            <h6 class="fw-bold">Invoice #12345</h6>
-                            <p>Date: March 10, 2025</p>
+                            <h6 class="fw-bold">Invoice # </h6>
+                            <p>Date:</p>
                         </div>
                     </div>
                     <hr>
@@ -245,15 +245,15 @@
                     <div class="row">
                         <div class="col-md-6">
                             <h6 class="fw-bold">Bill To:</h6>
-                            <p>John Doe</p>
-                            <p>789 Client St, City, Country</p>
-                            <p>Email: johndoe@email.com</p>
+                            <p>CustomerName:</p>
+                            <p>Address:</p>
+                            <p>Email: </p>
                         </div>
                         <div class="col-md-6 text-end">
                             <h6 class="fw-bold">Project Details:</h6>
-                            <p><strong>Work Order #56789</strong></p>
-                            <p>Project: Residential Renovation</p>
-                            <p>Assigned Worker: Mark Smith</p>
+                            <p><strong>Work Order </strong></p>
+                            <p>Project: </p>
+                            <p>Assigned Worker:</p>
                         </div>
                     </div>
                     <hr>
@@ -269,17 +269,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>Electrical Wiring</td>
-                                <td>10</td>
-                                <td>$50.00</td>
-                                <td>$500.00</td>
-                            </tr>
-                            <tr>
-                                <td>Labor Costs</td>
-                                <td>1</td>
-                                <td>$200.00</td>
-                                <td>$200.00</td>
+                            <tr>                               
                             </tr>
                         </tbody>
                     </table>
@@ -288,8 +278,8 @@
                     <div class="row">
                         <div class="col-md-6"></div>
                         <div class="col-md-6 text-end">
-                            <h5 class="fw-bold">Total: $700.00</h5>
-                            <p class="text-danger">Due Date: March 20, 2025</p>
+                            <h5 class="fw-bold">Total:</h5>
+                            <p class="text-danger">Due Date: </p>
                         </div>
                     </div>
 
@@ -327,74 +317,12 @@
     <!-- Bootstrap JavaScript (Ensure Bootstrap JS is included) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            document.getElementById("newProjectForm").addEventListener("submit", function (event) {
-                event.preventDefault(); // Prevent actual form submission
-
-                // Get input values
-                let projectName = document.getElementById("projectName").value.trim();
-                let jobDescription = document.getElementById("jobDescription").value.trim();
-                let address = document.getElementById("address").value.trim();
-                let deadline = document.getElementById("deadline").value.trim();
-
-                // Validate fields
-                if (!projectName || !jobDescription || !address || !deadline) {
-                    alert("Please fill all fields!");
-                    return;
-                }
-
-                // Display success message (Replace with actual submission logic)
-                alert("New Project Added:\n" +
-                    "Project: " + projectName + "\n" +
-                    "Job Description: " + jobDescription + "\n" +
-                    "Address: " + address + "\n" +
-                    "Deadline: " + deadline);
-
-                // Close modal properly
-                let modalElement = document.getElementById("addProjectModal");
-                let modalInstance = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
-                modalInstance.hide();
-
-                // Clear form fields
-                document.getElementById("newProjectForm").reset();
-            });
-        });
-
-        function logout() {
+      function logout() {
             window.location.href = '/Identity/Account/Logout';
         }
-
-        function processPayment() {
-            alert("Redirecting to payment gateway...");
-            // Replace with actual payment logic
-        }
-
         function printInvoice() {
             window.print();
-        }
-                 function showJobDetails(jobId, jobType, contractor, status, completionDate, location, customerName, jobDescription, jobMaterials, laborCost, totalCost) {
-                document.getElementById("jobId").innerText = jobId;
-                document.getElementById("customerName").innerText = customerName;
-                document.getElementById("jobType").innerText = jobType;
-                document.getElementById("jobContractor").innerText = contractor;
-                document.getElementById("jobStatus").innerText = status;
-                document.getElementById("jobCompletion").innerText = completionDate;
-                document.getElementById("jobLocation").innerText = location;
-                document.getElementById("jobDescription").innerText = jobDescription;
-                document.getElementById("jobMaterials").innerText = jobMaterials;
-                document.getElementById("jobLaborCost").innerText = laborCost;
-                document.getElementById("jobTotalCost").innerText = totalCost;
-
-                // Update status badge color
-                let statusBadge = document.getElementById("jobStatus");
-                statusBadge.className = "badge"; // Reset previous class
-                if (status === "In Progress") statusBadge.classList.add("bg-warning", "text-dark");
-                else if (status === "Completed") statusBadge.classList.add("bg-success");
-                else statusBadge.classList.add("bg-secondary");
-
-                var myModal = new bootstrap.Modal(document.getElementById("jobOrderModal"));
-                myModal.show();
-            }
+        }              
         // Initialize Bootstrap Tooltips
         document.addEventListener("DOMContentLoaded", function () {
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
@@ -402,20 +330,18 @@
                 return new bootstrap.Tooltip(tooltipTriggerEl);
             });
         });
-    </script>
-    <script>
-        document.getElementById("orderLink").addEventListener("click", function (event) {
-            event.preventDefault(); // Prevent default jump behavior
+           document.getElementById("orderLink").addEventListener("click", function (event) {
+              event.preventDefault(); 
 
-            let target = document.getElementById("activeJobOrders");
-            let navbarHeight = document.querySelector(".navbar").offsetHeight; // Get navbar height
+              let target = document.getElementById("activeJobOrders");
+              let navbarHeight = document.querySelector(".navbar").offsetHeight; // Get navbar height
 
-            // Smoothly scroll to the section, adjusting for the navbar height
-            window.scrollTo({
-                top: target.offsetTop - navbarHeight - 20, // Offset 20px for extra spacing
-                behavior: "smooth"
-            });
-        });
+              // Smoothly scroll to the section, adjusting for the navbar height
+              window.scrollTo({
+                  top: target.offsetTop - navbarHeight - 20, 
+                  behavior: "smooth"
+              });
+          });   
     </script>
 
 

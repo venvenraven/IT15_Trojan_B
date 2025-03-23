@@ -158,16 +158,19 @@
     </style>
 </head>
 <body>
-
     <!-- 🚀 Lockout Notification Toast -->
     @if (TempData["LockoutMessage"] != null)
     {
-        <div id="lockoutToast" class="toast align-items-center text-white bg-danger position-fixed top-0 end-0 m-3" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="d-flex">
-                <div class="toast-body">
-                    @TempData["LockoutMessage"]
+        <div class="container">
+            <div id="lockoutToast" class="toast align-items-center text-white bg-danger position-fixed"
+                 style="top: 80px; right: 20px; z-index: 1050;" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        @TempData["LockoutMessage"]
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                            aria-label="Close"></button>
                 </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
         </div>
     }

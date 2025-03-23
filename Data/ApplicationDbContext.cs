@@ -18,10 +18,7 @@ namespace IT15_Trojan_B.Data
         public DbSet<Material> Materials { get; set; }
         public DbSet<SafetyEquipment> SafetyEquipments { get; set; }
         public DbSet<ToolEquipment> ToolEquipments { get; set; }
-
-        public DbSet<Order> Orders { get; set; }
-        public DbSet<Appointment> Appointments { get; set; }
-        public DbSet<Payment> Payments { get; set; }
+        public DbSet<Customer> Customers { get; set; }
         public DbSet<SecurityLog> SecurityLogs { get; set; }
 
 

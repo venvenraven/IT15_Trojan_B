@@ -2,28 +2,51 @@
 @inject SignInManager<IdentityUser> SignInManager
 @inject UserManager<IdentityUser> UserManager
 
-@{
-    // Check if the current view is an admin, employee, or customer dashboard
-    var isDashboard = ViewContext.RouteData.Values["Action"]?.ToString()?.Contains("Dashboard") ?? false;
-}
-
 <ul class="navbar-nav sticky-navbar">
-
     @if (SignInManager.IsSignedIn(User))
     {
+        var user = await UserManager.GetUserAsync(User);
+        var roles = await UserManager.GetRolesAsync(user);
+
+        string dashboardUrl = "#"; // Default URL in case no role is found
+
+        if (roles.Contains("Admin"))
+        {
+            dashboardUrl = "/Admin/Dashboard";
+        }
+        else if (roles.Contains("Employee"))
+        {
+            dashboardUrl = "/Home/EmployeeDashboard";
+        }
+        else if (roles.Contains("Customer"))
+        {
+            dashboardUrl = "/Home/CustomerDashboard";
+        }
+
         <li class="nav-item">
-            <a class="nav-link custom-nav-link" asp-area="Identity" asp-page="/Account/Manage" title="Manage Account">
+            <a class="nav-link text-dark" href="@dashboardUrl" title="DASHBOARD">
                 Hello @User.Identity?.Name!
             </a>
         </li>
         <li class="nav-item">
-            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-                <button type="submit" class="nav-link btn btn-link custom-nav-link">Logout</button>
+            <form class="form-inline" method="post" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                <button type="submit" class="nav-link btn btn-link custom-nav-link">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
             </form>
         </li>
     }
     else
     {
+        <li class="nav-item">
+            <a class="nav-link custom-nav-link" asp-area="" asp-controller="Home" asp-action="Index">HOME</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link custom-nav-link" href="#about-us">ABOUT</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link custom-nav-link" href="#contact-us">CONTACT</a>
+        </li>
         <li class="nav-item dropdown">
             <a class="nav-link custom-nav-link" href="#" id="registerDropdown">
                 Register

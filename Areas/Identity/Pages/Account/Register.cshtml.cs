@@ -19,6 +19,9 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
+using IT15_Trojan_B.Data;
+using IT15_Trojan_B.Models;
 
 namespace IT15_Trojan_B.Areas.Identity.Pages.Account
 {
@@ -30,13 +33,17 @@ namespace IT15_Trojan_B.Areas.Identity.Pages.Account
         private readonly IUserEmailStore<IdentityUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
+        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly ApplicationDbContext _context;
 
         public RegisterModel(
             UserManager<IdentityUser> userManager,
             IUserStore<IdentityUser> userStore,
             SignInManager<IdentityUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            RoleManager<IdentityRole> roleManager,
+            ApplicationDbContext context)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -44,6 +51,8 @@ namespace IT15_Trojan_B.Areas.Identity.Pages.Account
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            _roleManager = roleManager;
+            _context = context;
         }
 
         [BindProperty]
@@ -60,11 +69,9 @@ namespace IT15_Trojan_B.Areas.Identity.Pages.Account
             public string FullName { get; set; }
 
             [Required]
-            [Display(Name = "Address")]
-            public string Address { get; set; }
-
-            [Required]
-            public string Classification { get; set; } // Dropdown value
+            [EmailAddress]
+            [Display(Name = "Email")]
+            public string Email { get; set; }
 
             [Required]
             [Phone]
@@ -72,12 +79,11 @@ namespace IT15_Trojan_B.Areas.Identity.Pages.Account
             public string PhoneNumber { get; set; }
 
             [Required]
-            [EmailAddress]
-            [Display(Name = "Email")]
-            public string Email { get; set; }
+            [Display(Name = "Address")]
+            public string Address { get; set; }
 
             [Required]
-            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 12)]
             [DataType(DataType.Password)]
             [Display(Name = "Password")]
             public string Password { get; set; }
@@ -86,8 +92,6 @@ namespace IT15_Trojan_B.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
-
-            public IFormFile UploadFile { get; set; } // For file upload
         }
 
         public async Task OnGetAsync(string returnUrl = null)
@@ -103,12 +107,14 @@ namespace IT15_Trojan_B.Areas.Identity.Pages.Account
 
             if (ModelState.IsValid)
             {
-                var user = CreateUser();
-
-                await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
-                await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
-
-                user.PhoneNumber = Input.PhoneNumber;
+                var user = new ApplicationUser
+                {
+                    UserName = Input.Email,
+                    Email = Input.Email,
+                    PhoneNumber = Input.PhoneNumber,
+                    FullName = Input.FullName,
+                    Address = Input.Address
+                };
 
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
@@ -122,25 +128,45 @@ namespace IT15_Trojan_B.Areas.Identity.Pages.Account
                         new Claim("Address", Input.Address)
                     });
 
+                    if (!await _roleManager.RoleExistsAsync("Customer"))
+                    {
+                        await _roleManager.CreateAsync(new IdentityRole("Customer"));
+                    }
+
+                    await _userManager.AddToRoleAsync(user, "Customer");
+
+                    var customer = new Customer
+                    {
+                        FullName = Input.FullName,
+                        Email = Input.Email,
+                        PhoneNumber = Input.PhoneNumber,
+                        Address = Input.Address,
+                        PasswordHash = user.PasswordHash,
+                        CreatedAt = DateTime.UtcNow
+                    };
+
+                    _context.Customers.Add(customer);
+                    await _context.SaveChangesAsync();
+
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
                     var callbackUrl = Url.Page(
                         "/Account/ConfirmEmail",
-                        pageHandler: null,
-                        values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
-                        protocol: Request.Scheme);
+                        null,
+                        new { area = "Identity", userId, code, returnUrl },
+                        Request.Scheme);
 
                     await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
                         $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {
-                        return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
+                        return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl });
                     }
                     else
                     {
-                        await _signInManager.SignInAsync(user, isPersistent: false);
+                        await _signInManager.SignInAsync(user, false);
                         return LocalRedirect(returnUrl);
                     }
                 }
@@ -161,9 +187,7 @@ namespace IT15_Trojan_B.Areas.Identity.Pages.Account
             }
             catch
             {
-                throw new InvalidOperationException($"Can't create an instance of '{nameof(IdentityUser)}'. " +
-                    $"Ensure that '{nameof(IdentityUser)}' is not an abstract class and has a parameterless constructor, or alternatively " +
-                    $"override the register page in /Areas/Identity/Pages/Account/Register.cshtml");
+                throw new InvalidOperationException($"Can't create an instance of '{nameof(IdentityUser)}'. Ensure it has a parameterless constructor.");
             }
         }
 

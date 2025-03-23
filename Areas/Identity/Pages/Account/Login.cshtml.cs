@@ -141,7 +141,7 @@ namespace IT15_Trojan_B.Areas.Identity.Pages.Account
                     ViewData["IsLockedOut"] = true;
                     TempData["LockoutMessage"] = "Too many failed login attempts. Your account has been locked for 10 minutes.";
 
-                    return RedirectToPage("./Lockout");
+                    return RedirectToPage("./Index");
                 }
                 else
                 {

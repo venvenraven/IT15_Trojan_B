@@ -5,7 +5,7 @@
 namespace IT15_Trojan_B.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class AddFullNameAndAddressToUsers : Migration
+    public partial class UpdateInitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

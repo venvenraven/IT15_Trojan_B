@@ -17,8 +17,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-// 🔹 Configure Identity with security settings
-builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
+// 🔹 Configure Identity with security settings and roles
+builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 {
     options.SignIn.RequireConfirmedAccount = true;
     options.Password.RequireDigit = true;
@@ -30,8 +30,10 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
     options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(10);
     options.Lockout.MaxFailedAccessAttempts = 3;
 })
+.AddRoles<IdentityRole>() // ✅ Adds Role Management
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
+
 
 // 🔹 Secure Cookies & Authentication Paths
 builder.Services.ConfigureApplicationCookie(options =>
@@ -98,63 +100,55 @@ app.UseRouting(); // ✅ Correct order
 app.UseAuthentication();
 app.UseAuthorization();
 
-// 🔹 Route Configuration
-app.UseEndpoints(endpoints =>
-{
-    // Admin Dashboard Route
-    endpoints.MapControllerRoute(
-     name: "admin",
-     pattern: "admin/dashboard",
-     defaults: new { controller = "Admin", action = "Dashboard" });
+app.MapControllerRoute(
+    name: "admin",
+    pattern: "admin/dashboard",
+    defaults: new { controller = "Admin", action = "Dashboard" });
 
-
-    // Employee Dashboard Route
-    endpoints.MapControllerRoute(
+app.MapControllerRoute(
         name: "employeeDashboard",
         pattern: "employee/dashboard",
         defaults: new { controller = "Home", action = "EmployeeDashboard" });
 
-    // Customer Dashboard Route
-    endpoints.MapControllerRoute(
+app.MapControllerRoute(
+        name: "employeeDashboard",
+        pattern: "employee/dashboard",
+        defaults: new { controller = "Home", action = "EmployeeDashboard" });
+
+app.MapControllerRoute(
         name: "customerDashboard",
         pattern: "customer/dashboard",
         defaults: new { controller = "Home", action = "CustomerDashboard" });
-
-    // Default Route
-    endpoints.MapControllerRoute(
+app.MapControllerRoute(
         name: "default",
         pattern: "{controller=Home}/{action=Index}/{id?}");
 
     // Work Order Route
-    endpoints.MapControllerRoute(
+    app.MapControllerRoute(
         name: "workorder",
         pattern: "workorder/{action=WorkOrder}/{id?}",
         defaults: new { controller = "Admin" });
 
     // Materials Route
-    endpoints.MapControllerRoute(
+    app.MapControllerRoute(
         name: "materials",
         pattern: "materials/{action=Index}/{id?}",
         defaults: new { controller = "Materials" });
 
     // Tools Route
-    endpoints.MapControllerRoute(
+    app.MapControllerRoute(
         name: "tools",
         pattern: "tools/{action=Tools}/{id?}",
         defaults: new { controller = "Admin" });
 
     // Safety Equipment Route
-    endpoints.MapControllerRoute(
+   app.MapControllerRoute(
         name: "safetyEquipment",
         pattern: "safetyequipment/{action=Index}/{id?}",
         defaults: new { controller = "SafetyEquipment" });
 
-    // SignalR Hub Route
-    endpoints.MapHub<MaterialsHub>("/materialsHub");
-    
-    endpoints.MapRazorPages(); // ✅ Ensure Razor Pages are mapped
-});
-
+app.MapHub<MaterialsHub>("/materialsHub");
+app.MapRazorPages();
 app.Run();
 
 // 🔹 Role & User Seeding Method (Run Synchronously)

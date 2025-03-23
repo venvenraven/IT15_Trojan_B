@@ -1,4 +1,4 @@
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using IT15_Trojan_B.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -58,20 +58,6 @@ namespace IT15_Trojan_B.Controllers
             };
 
             return View();
-        }
-
-        [Authorize(Roles = "Customer")]
-        public IActionResult CustomerDashboard()
-        {
-            var model = new CustomerDashboardViewModel
-            {
-                PendingOrders = _context.Orders.Count(o => o.Status == "Pending"),
-                CompletedOrders = _context.Orders.Count(o => o.Status == "Completed"),
-                UpcomingAppointments = _context.Appointments.Count(a => a.Date >= DateTime.Now),
-                TotalPayments = _context.Payments.Sum(p => p.Amount)
-            };
-
-            return View(model);
         }
 
         public IActionResult CustomerProfile()
